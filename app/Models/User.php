@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use app\Models\FarmerWarehouse;
+use app\Role;
 
 class User extends Authenticatable
 {
@@ -20,9 +22,14 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone_number',
         'password',
+        'role'
     ];
 
+    protected $cast = [
+        'role' => Role::class,
+    ];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -44,5 +51,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get all of the farmerwarehouse for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function farmerwarehouse()
+    {
+        return $this->hasMany(FarmerWarehouse::class, 'user_id', 'id');
     }
 }
