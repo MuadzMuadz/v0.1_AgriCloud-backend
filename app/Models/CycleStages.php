@@ -15,4 +15,16 @@ class CycleStages extends Model
         'grow_stage_id',
         'started_at',
     ];
+
+     /**
+     * Get the farmer_warehouse owns the fields
+     */
+    public function cycle()
+    {
+        return $this->belongsTo(Cycle::class, 'cycle_id', 'id');
+    }
+    public function growStage()
+    {
+        return $this->belongsTo(GrowStages::class, 'grow_stage_id', 'id');
+    }
 }

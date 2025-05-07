@@ -16,5 +16,12 @@ class GrowStages extends Model
         'day_offset',
         'expected_action',
         'description',
-    ];
+    ];    
+     /**
+     * Get the farmer_warehouse owns the fields
+     */
+    public function cropTemplate()
+    {
+        return $this->belongsTo(CropTemplate::class, 'crop_template_id', 'id');
+    }
 }
