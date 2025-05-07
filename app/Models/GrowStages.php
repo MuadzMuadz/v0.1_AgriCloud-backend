@@ -9,4 +9,12 @@ class GrowStages extends Model
 {
     /** @use HasFactory<\Database\Factories\GrowStagesFactory> */
     use HasFactory;
+
+    protected $fillable =[
+        'crop_template_id',
+        'stage_name',
+        'day_offset',
+        'expected_action',
+        'description',
+    ];
 }

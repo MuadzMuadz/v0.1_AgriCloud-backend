@@ -9,4 +9,10 @@ class Field extends Model
 {
     /** @use HasFactory<\Database\Factories\FieldFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'farmer_warehouse_id',
+        'name',
+        'area'
+    ];
 }

@@ -9,4 +9,10 @@ class FarmerWarehouse extends Model
 {
     /** @use HasFactory<\Database\Factories\FarmerWarehouseFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'name',
+        'location_url'
+    ];
 }

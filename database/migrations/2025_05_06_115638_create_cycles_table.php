@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('field_id')->constrained('fields')->onDelete('cascade');
             $table->foreignId('crop_template_id')->constrained('crop_templetes')->nullOnDelete();
             $table->date('start_date')->nullable()->default(new DateTime());
-            $table->enum('starus', ['pending', 'active', 'done'])->default(['pending']);
+            $table->enum('status', ['pending', 'active', 'done'])->default(['pending']);
             $table->timestamps();
         });
     }

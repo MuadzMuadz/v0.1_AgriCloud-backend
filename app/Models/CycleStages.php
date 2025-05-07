@@ -9,4 +9,10 @@ class CycleStages extends Model
 {
     /** @use HasFactory<\Database\Factories\CycleStagesFactory> */
     use HasFactory;
+
+    protected $fillable =[
+        'cycle_id',
+        'grow_stage_id',
+        'started_at',
+    ];
 }

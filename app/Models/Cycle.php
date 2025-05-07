@@ -9,4 +9,11 @@ class Cycle extends Model
 {
     /** @use HasFactory<\Database\Factories\CycleFactory> */
     use HasFactory;
+
+    protected $fillable =[
+        'field_id',
+        'crop_template_id',
+        'start_date',
+        'status',
+    ];
 }

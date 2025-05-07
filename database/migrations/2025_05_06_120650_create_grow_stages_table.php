@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('grow_stages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('drop_template_id')->constrained('crop_templates')->onDelete('cascade');
+            $table->foreignId('crop_template_id')->constrained('crop_templates')->onDelete('cascade');
             $table->string('stage_name', 255);
             $table->integer('day_offset')->unsigned();
             $table->string('expected_action', 255)->nullable();

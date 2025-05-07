@@ -9,4 +9,9 @@ class CropTemplate extends Model
 {
     /** @use HasFactory<\Database\Factories\CropTemplateFactory> */
     use HasFactory;
+
+    protected $fillable =[
+        'name',
+        'description',       
+    ];
 }
