@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('actual_needs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->nullOnDelete();
-            $table->foreignId('field_id')->constrained('fields')->nullOnDelete();
-            $table->foreignId('cycle_stag_id')->constrained('cycle_stages')->nullOnDelete();
-            $table->foreignId('inventory_movement_id')->constrained('inventory_movement')->nullOnDelete();
-            $table->enum('status', ['pending', 'done'])->default(['pending']);
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('field_id')->constrained('fields');
+            $table->foreignId('cycle_stag_id')->constrained('cycle_stages');
+            $table->foreignId('inventory_movement_id')->constrained('inventory_movements');
+            $table->enum('status', ['pending', 'done'])->nullable()->default('pending');
             $table->timestamps();
         });
     }
