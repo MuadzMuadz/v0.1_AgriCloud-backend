@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('warehouse_item_id')->constrained('warehouse_items')->nullOnDelete();
-            $table->enum('movement_type', ['IN', 'OUT']);
+            $table->foreignId('warehouse_item_id')->constrained('warehouse_items');
+            $table->enum('movement_type', ['IN', 'OUT'])->nullable()->default('IN');
             $table->bigInteger('quantity');
-            $table->dateTime('movement_date');
+            $table->dateTime('moved_at');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

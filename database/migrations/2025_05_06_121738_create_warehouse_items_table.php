@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('warehouse_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('farmer_warehouse_id')->constrained('farmer_warehouse')->onDelete('cascade');
-            $table->foreignId('category_id')->constrained('categories')->nullOnDelete();
+            $table->foreignId('farmer_warehouse_id')->constrained('farmer_warehouses')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories');
             $table->string('name', 255);
             $table->string('unit', 255);
             $table->integer('quanity')->unsigned();

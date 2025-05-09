@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('cycle_stages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cycle_id')->constrained('cycles')->onDelete('cascade');
-            $table->foreignId('grow_stage_id')->constrained('grow_stages')->nullOnDelete();
-            $table->dateTime('started_at');
+            $table->string('stage_name', 255);
+            $table->integer('day_offset')->unsigned()->nullable();
+            $table->string('expected_action');
+            $table->text('description')->nullable();
+            $table->timestamp('started_at');
             $table->timestamps();
         });
     }

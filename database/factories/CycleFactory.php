@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\CropTemplate;
+use App\Models\Field;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,10 @@ class CycleFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'field_id' => Field::factory(),
+            'crop_template_id' => CropTemplate::factory(),
+            'start_date' => $this->faker->date(),
+            'status' => $this->faker->randomElement(['pending', 'active', 'completed']),
         ];
     }
 }

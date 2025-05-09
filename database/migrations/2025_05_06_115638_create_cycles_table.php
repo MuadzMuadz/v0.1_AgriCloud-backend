@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('cycles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('field_id')->constrained('fields')->onDelete('cascade');
-            $table->foreignId('crop_template_id')->constrained('crop_templetes')->nullOnDelete();
-            $table->date('start_date')->nullable()->default(new DateTime());
-            $table->enum('starus', ['pending', 'active', 'done'])->default(['pending']);
+            $table->foreignId('crop_template_id')->constrained('crop_templates');
+            $table->date('started_at')->nullable();
+            $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
             $table->timestamps();
         });
     }
