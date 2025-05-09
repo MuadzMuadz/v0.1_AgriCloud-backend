@@ -27,9 +27,9 @@ class User extends Authenticatable
         'role'
     ];
 
-    protected $cast = [
-        'role' => Role::class,
-    ];
+    // protected $casts = [
+    //     'role' => Role::class,
+    // ];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -61,5 +61,19 @@ class User extends Authenticatable
     public function farmerwarehouse()
     {
         return $this->hasMany(FarmerWarehouse::class, 'user_id', 'id');
+    }
+
+    public function authorizeRoles($roles)
+    {
+        if (is_array($roles)) {
+            if (!in_array($this->role, $roles)) {
+                abort(403, 'This action is unauthorized.');
+            }
+        } else {
+            if ($this->role !== $roles) {
+                abort(403, 'This action is unauthorized.');
+            }
+        }
+        return true;
     }
 }

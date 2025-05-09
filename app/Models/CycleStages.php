@@ -12,7 +12,10 @@ class CycleStages extends Model
 
     protected $fillable =[
         'cycle_id',
-        'grow_stage_id',
+        'stage_name',
+        'day_offset',
+        'expected_action',
+        'description',
         'started_at',
     ];
 
@@ -22,9 +25,5 @@ class CycleStages extends Model
     public function cycle()
     {
         return $this->belongsTo(Cycle::class, 'cycle_id', 'id');
-    }
-    public function growStage()
-    {
-        return $this->belongsTo(GrowStages::class, 'grow_stage_id', 'id');
     }
 }

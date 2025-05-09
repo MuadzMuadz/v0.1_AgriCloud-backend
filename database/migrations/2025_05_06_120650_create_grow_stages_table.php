@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('stage_name', 255);
             $table->integer('day_offset')->unsigned();
             $table->string('expected_action', 255)->nullable();
-            $table->text('description')->nullable()->default('text');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
