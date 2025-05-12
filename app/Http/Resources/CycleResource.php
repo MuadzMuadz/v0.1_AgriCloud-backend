@@ -14,25 +14,27 @@ class CycleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $currentStage = $this->cycleStage->where('status', 'active')->first() ?? $this->cycleStage->first();
+
         return [
             'id' => $this->id,
-            'name' => $this->croptemplate->name,
-            'description' => $this->croptemplate->description,
+            'name' => optional($this->cropTemplate)->name,
+            'description' => optional($this->cropTemplate)->description,
             'location' => $this->location,
-            'current_stage' => $this->cyclestage ? [
-                'id' => $this->cyclestage->id,
-                'name' => $this->cyclestage->stage,
-                'description' => $this->cyclestage->description,
-                'start_date' => $this->cyclestage->pivot->start_date,
-                'end_date' => $this->cyclestage->pivot->end_date,
+            'current_stage' => $currentStage ? [
+                'id' => $currentStage->id,
+                'name' => $currentStage->stage,
+                'description' => $currentStage->description,
+                'start_date' => $currentStage->start_date,
+                'end_date' => $currentStage->end_date,
             ] : null,
-            'stages' => $this->stages->map(function ($stage) {
+            'stages' => $this->cycleStage->map(function ($stage) {
                 return [
                     'id' => $stage->id,
-                    'name' => $stage->name,
+                    'name' => $stage->stage,
                     'description' => $stage->description,
-                    'start_date' => $stage->pivot->start_date,
-                    'end_date' => $stage->pivot->end_date,
+                    'start_date' => $stage->start_date,
+                    'end_date' => $stage->end_date,
                 ];
             }),
             'created_at' => $this->created_at,
