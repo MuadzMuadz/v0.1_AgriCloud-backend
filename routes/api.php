@@ -2,28 +2,27 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\AdminController;
-// use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CropTemplateController;
 use App\Http\Controllers\CycleController;
 use App\Http\Controllers\CycleStagesController;
-use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\FarmerWarehouseController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\GrowStagesController;
-use App\Http\Controllers\InventoryMovementController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+});
+// })->middleware('auth:sanctum');
 
-Route::middleware([\App\Http\Middleware\AuthMiddleware::class . ':admin,farmer,guest'])->group(function () {
-    Route::get('/auth', [\App\Http\Controllers\AuthController::class, 'index']);
-    Route::post('/auth/register', [\App\Http\Controllers\AuthController::class, 'register']);
-    Route::post('/auth/login', [\App\Http\Controllers\AuthController::class, 'login']);
-    Route::post('/auth/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+// Authentication routes
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('profile', [AuthController::class, 'profile'])->middleware('auth:sanctum');
 });
 
 
