@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\CropTemplate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,15 +10,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CropTemplateFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = CropTemplate::class;
+
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->word,
+            'description' => $this->faker->sentence,
         ];
     }
 }

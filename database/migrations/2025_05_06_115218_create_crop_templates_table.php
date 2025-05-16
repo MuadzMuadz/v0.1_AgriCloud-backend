@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('crop_templates', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->unique();
-            $table->text('description')->nullable()->default('text');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

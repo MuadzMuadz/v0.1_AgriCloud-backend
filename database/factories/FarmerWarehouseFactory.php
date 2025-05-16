@@ -2,22 +2,23 @@
 
 namespace Database\Factories;
 
+use App\Models\FarmerWarehouse;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FarmerWarehouse>
  */
-class FarmerWarehouseFactory extends Factory
+class WarehouseFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = FarmerWarehouse::class;
+
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
+            'name' => $this->faker->word,
+            'location' => $this->faker->url,
         ];
     }
 }
