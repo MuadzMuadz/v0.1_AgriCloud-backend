@@ -29,22 +29,60 @@ Route::middleware([\App\Http\Middleware\AuthMiddleware::class . ':admin,farmer,g
 
 
 // User routes
-Route::apiResource('users', UserController::class);
+
+Route::get('/users', [UserController::class, 'index']);       
+Route::post('/users', [UserController::class, 'store']);   
+Route::get('/users/{id}', [UserController::class, 'show']);   
+Route::put('/users/{id}', [UserController::class, 'update']); 
+Route::delete('/users/{id}', [UserController::class, 'destroy']); 
 
 // Crop Template routes
-Route::apiResource('crop-templates', CropTemplateController::class);
+
+Route::get('/crop-templates', [CropTemplateController::class, 'index']);         
+Route::post('/crop-templates', [CropTemplateController::class, 'store']);        
+Route::get('/crop-templates/{id}', [CropTemplateController::class, 'show']);   
+Route::put('/crop-templates/{id}', [CropTemplateController::class, 'update']); 
+Route::delete('/crop-templates/{id}', [CropTemplateController::class, 'destroy']);
 
 // Cycle routes
-Route::apiResource('cycles', CycleController::class);
+
+Route::get('/cycles', [CycleController::class, 'index']);         
+Route::post('/cycles', [CycleController::class, 'store']);        
+Route::get('/cycles/{id}', [CycleController::class, 'show']);   
+Route::put('/cycles/{id}', [CycleController::class, 'update']); 
+Route::delete('/cycles/{id}', [CycleController::class, 'destroy']);
 
 // Cycle Stages routes
-Route::apiResource('cycle-stages', CycleStagesController::class);
+
+Route::get('/cycle-stages', [CycleStagesController::class, 'index']);         
+Route::post('/cycle-stages', [CycleStagesController::class, 'store']);        
+Route::get('/cycle-stages/{id}', [CycleStagesController::class, 'show']);   
+Route::put('/cycle-stages/{id}', [CycleStagesController::class, 'update']); 
+Route::delete('/cycle-stages/{id}', [CycleStagesController::class, 'destroy']);
 
 // Farmer Warehouse routes
-Route::apiResource('farmer-warehouses', FarmerWarehouseController::class);
+
+Route::get('/farmer-warehouses', [FarmerWarehouseController::class, 'index']);         
+Route::post('/farmer-warehouses', [FarmerWarehouseController::class, 'store']);        
+Route::get('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'show']);   
+Route::put('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'update']); 
+Route::delete('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'destroy']);
+
 
 // Field routes
-Route::apiResource('fields', FieldController::class);
+
+Route::get('/fields', [FieldController::class, 'index']);         
+Route::post('/fields', [FieldController::class, 'store']);        
+Route::get('/fields/{id}', [FieldController::class, 'show']);   
+Route::put('/fields/{id}', [FieldController::class, 'update']); 
+Route::delete('/fields/{id}', [FieldController::class, 'destroy']);
+
 
 // Grow Stages routes
-Route::apiResource('grow-stages', GrowStagesController::class);
+// Route::apiResource('grow-stages', GrowStagesController::class);
+Route::get('/grow-stages', [GrowStagesController::class, 'index']);         
+Route::post('/grow-stages', [GrowStagesController::class, 'store']);        
+Route::get('/grow-stages/{id}', [GrowStagesController::class, 'show']);   
+Route::put('/grow-stages/{id}', [GrowStagesController::class, 'update']); 
+Route::delete('/grow-stages/{id}', [GrowStagesController::class, 'destroy']);
+
