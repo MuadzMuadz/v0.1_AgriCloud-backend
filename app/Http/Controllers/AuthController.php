@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException as ValidationValidationException;
-use League\Config\Exception\ValidationException;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -20,7 +20,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'phone_number' => 'required|string',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:admin,farmer',
+            // 'role' => 'required|in:admin,farmer',
         ]);
 
         $data['password'] = bcrypt($data['password']);
@@ -43,11 +43,12 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'email' => ['Invalid credentials.'],
             ]);
         }
 
+        $user->tokens()->delete(); // Revoke all previous tokens
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -61,10 +62,49 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = auth()->guard()->user();
+
+        // Hapus token aktif aja
+        $user->currentAccessToken()?->delete();
 
         return response()->json(['message' => 'Logged out successfully.']);
     }
+ 
 
-    
+    /**
+     * Display the specified resource.
+     */
+    public function getUser(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'data' => new UserResource($user),
+        ]);
+    }
+
+    public function updateUser(Request $request)
+    {
+        $user = $request->user();
+
+        $data = $request->validate([
+            'name' => 'sometimes|string',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+            'phone_number' => 'sometimes|string',
+            'password' => 'sometimes|string|min:6',
+        ]);
+
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'data' => new UserResource($user),
+        ]);
+    }
+        
+        
 }

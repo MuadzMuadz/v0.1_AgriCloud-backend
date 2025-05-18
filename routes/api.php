@@ -19,11 +19,16 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::middleware([\App\Http\Middleware\AuthMiddleware::class . ':admin,farmer,guest'])->group(function () {
-    Route::get('/auth', [\App\Http\Controllers\AuthController::class, 'index']);
-    Route::post('/auth/register', [\App\Http\Controllers\AuthController::class, 'register']);
-    Route::post('/auth/login', [\App\Http\Controllers\AuthController::class, 'login']);
-    Route::post('/auth/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+
+Route::prefix('auth')->group(function () {
+    Route::get('/', [\App\Http\Controllers\AuthController::class, 'index']);
+    Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('/password/reset', [\App\Http\Controllers\AuthController::class, 'resetPassword']);
+    Route::post('/password/update', [\App\Http\Controllers\AuthController::class, 'updatePassword'])->middleware('auth:sanctum');
+    Route::get('/user', [\App\Http\Controllers\AuthController::class, 'getUser'])->middleware('auth:sanctum');
+    route::put('/user/update', [\App\Http\Controllers\AuthController::class, 'updateUser'])->middleware('auth:sanctum');
 });
 
 
