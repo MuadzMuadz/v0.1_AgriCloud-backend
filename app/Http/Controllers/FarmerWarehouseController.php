@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\FarmerWarehouse;
 use App\Http\Resources\FarmerWarehouseResource;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreFarmerWarehouseRequest;
+use App\Http\Requests\UpdateFarmerWarehouseRequest;
+use Laravel\Sanctum\Guard;
 
 class FarmerWarehouseController extends Controller
 {
@@ -13,35 +15,30 @@ class FarmerWarehouseController extends Controller
      */
     public function index()
     {
-        // Fetch all farmer warehouses with their related user and fields
-        $farmerWarehouses = FarmerWarehouse::with(['userId', 'field'])->get();
+        $farmerWarehouses = FarmerWarehouse::with(['user'])->get();
         return FarmerWarehouseResource::collection($farmerWarehouses);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
+     * @param  mixed $request
+     * @return void
      */
-    public function store(Request $request)
+    public function store(StoreFarmerWarehouseRequest $request)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255|unique:farmer_warehouses,name',
-            'location_url' => 'required|string',
-        ]);
+        $validated = $request->validated();
+        $validated['user_id'] = auth()->guard()->id();
 
-        // Create a new farmer warehouse
-        $farmerWarehouse = FarmerWarehouse::create($validated);
+        $warehouse = FarmerWarehouse::create($validated);
 
-        return new FarmerWarehouseResource($farmerWarehouse);
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('farmer_warehouses/photos', 'public');
+                $warehouse->photos()->create(['path' => $path]);
+            }
+        }
+
+        return new FarmerWarehouseResource($warehouse);
     }
 
     /**
@@ -55,30 +52,26 @@ class FarmerWarehouseController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateFarmerWarehouseRequest $request, string $id)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255|unique:farmer_warehouses,name,' . $id,
-            'location_url' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
-        // Find and update the farmer warehouse
-        $farmerWarehouse = FarmerWarehouse::findOrFail($id);
-        $farmerWarehouse->update($validated);
+        $warehouse = FarmerWarehouse::findOrFail($id);
+        $warehouse->update($validated);
 
-        return new FarmerWarehouseResource($farmerWarehouse);
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('farmer_warehouses/photos', 'public');
+                $warehouse->photos()->create(['path' => $path]);
+            }
+        }
+
+        return new FarmerWarehouseResource($warehouse);
     }
 
     /**

@@ -2,16 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\AdminController;
-// use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CropTemplateController;
 use App\Http\Controllers\CycleController;
 use App\Http\Controllers\CycleStagesController;
-use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\FarmerWarehouseController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\GrowStagesController;
-use App\Http\Controllers\InventoryMovementController;
 use App\Http\Controllers\UserController;
 
 
@@ -21,17 +19,30 @@ Route::get('/user', function (Request $request) {
 
 
 Route::prefix('auth')->group(function () {
-    Route::get('/', [\App\Http\Controllers\AuthController::class, 'index']);
-    Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
-    Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::post('/password/reset', [\App\Http\Controllers\AuthController::class, 'resetPassword']);
-    Route::post('/password/update', [\App\Http\Controllers\AuthController::class, 'updatePassword'])->middleware('auth:sanctum');
-    Route::get('/user', [\App\Http\Controllers\AuthController::class, 'getUser'])->middleware('auth:sanctum');
-    route::put('/user/update', [\App\Http\Controllers\AuthController::class, 'updateUser'])->middleware('auth:sanctum');
+    Route::get('/', [AuthController::class, 'index']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+    Route::post('/password/update', [AuthController::class, 'updatePassword'])->middleware('auth:sanctum');
+    Route::get('/user', [AuthController::class, 'getUser'])->middleware('auth:sanctum');
+    route::put('/user/update', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
 });
 
 
+// Farmer routes
+
+Route::prefix('farmers')->group(function () {
+    // Add farmer-specific routes here in the future
+});
+
+// Public routes
+
+Route::prefix('public')->group(function () {
+    // Add routes accessible by all users (farmers and public) here in the future
+});
+// Dashboard routes
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth:sanctum');
 
 // User routes
 
@@ -53,8 +64,8 @@ Route::delete('/crop-templates/{id}', [CropTemplateController::class, 'destroy']
 
 Route::get('/cycles', [CycleController::class, 'index']);         
 Route::post('/cycles', [CycleController::class, 'store']);        
-Route::get('/cycles/{id}', [CycleController::class, 'show']);   
-Route::put('/cycles/{id}', [CycleController::class, 'update']); 
+Route::get('/cycles/{id}', [CycleController::class, 'show']);
+Route::put('/cycles/{id}', [CycleController::class, 'update']);
 Route::delete('/cycles/{id}', [CycleController::class, 'destroy']);
 
 // Cycle Stages routes
@@ -68,7 +79,7 @@ Route::delete('/cycle-stages/{id}', [CycleStagesController::class, 'destroy']);
 // Farmer Warehouse routes
 
 Route::get('/farmer-warehouses', [FarmerWarehouseController::class, 'index']);         
-Route::post('/farmer-warehouses', [FarmerWarehouseController::class, 'store']);        
+Route::post('/farmer-warehouses', [FarmerWarehouseController::class, 'store'])->middleware('auth:sanctum');        
 Route::get('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'show']);   
 Route::put('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'update']); 
 Route::delete('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'destroy']);
@@ -77,7 +88,7 @@ Route::delete('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'des
 // Field routes
 
 Route::get('/fields', [FieldController::class, 'index']);         
-Route::post('/fields', [FieldController::class, 'store']);        
+Route::post('/fields', [FieldController::class, 'store'])->middleware('auth:sanctum');        
 Route::get('/fields/{id}', [FieldController::class, 'show']);   
 Route::put('/fields/{id}', [FieldController::class, 'update']); 
 Route::delete('/fields/{id}', [FieldController::class, 'destroy']);

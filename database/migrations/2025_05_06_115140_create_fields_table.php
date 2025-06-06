@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('farmer_warehouse_id')->constrained('farmer_warehouses')->onDelete('cascade');
             $table->string('name', 255)->unique();
             $table->decimal('area', 10, 2);
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->json('custom_polygon')->nullable();
             $table->timestamps();
         });
     }

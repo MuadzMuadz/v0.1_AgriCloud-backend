@@ -7,6 +7,10 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserUpdate;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -59,6 +63,12 @@ class AuthController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     */    
+    /**
+     * logout
+     *
+     * @param  mixed $request
+     * @return void
      */
     public function logout(Request $request)
     {
@@ -83,28 +93,86 @@ class AuthController extends Controller
         ]);
     }
 
-    public function updateUser(Request $request)
+    /**
+     * Update the specified resource in storage.
+     */    
+    /**
+     * update
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
+     */
+    public function updateProfile(UserUpdate $request)
+    {
+        $user = $request->user();
+        $validated = $request->validated();
+        // Debugging: cek data profile_photo yang diupload
+        Log::debug('Profile photo:', [
+            'hasFile' => $request->hasFile('profile_photo'),
+            'file' => $request->file('profile_photo')
+        ]);
+
+        if (isset($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        }
+        
+        // Jika ada file profile_photo, proses upload
+        $profile_photo = null;
+        if ($request->hasFile('profile_photo')) {
+            // Hapus foto lama jika ada
+            if ($user->profile_photo && file_exists(public_path($user->profile_photo))) {
+            @unlink(public_path($user->profile_photo));
+            }
+
+            $profilePhoto = $request->file('profile_photo');
+            $filename = Str::slug($user->name) . '.' . $profilePhoto->extension();
+            $path = $profilePhoto->storeAs("users/{$user->id}/profile", $filename, 'public');
+            $profile_photo = "storage/{$path}";
+            $validated['profile_photo'] = $profile_photo;
+        }
+
+        $user->update($validated);
+
+        return new UserResource($user);
+    }
+      
+    public function updatePassword(Request $request)
     {
         $user = $request->user();
 
         $data = $request->validate([
-            'name' => 'sometimes|string',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'phone_number' => 'sometimes|string',
-            'password' => 'sometimes|string|min:6',
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:6|confirmed',
         ]);
 
-        if (isset($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
+        if (!Hash::check($data['current_password'], $user->password)) {
+            return response()->json(['message' => 'Current password is incorrect.'], 400);
         }
 
-        $user->update($data);
+        $user->update([
+            'password' => bcrypt($data['new_password']),
+        ]);
+
+        return response()->json(['message' => 'Password updated successfully.']);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        $user->update([
+            'password' => bcrypt($data['new_password']),
+        ]);
 
         return response()->json([
-            'message' => 'Profile updated successfully.',
-            'data' => new UserResource($user),
+            'message' => 'Password reset successfully. You can now log in with your new password.',
         ]);
     }
-        
         
 }

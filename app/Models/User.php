@@ -26,7 +26,8 @@ class User extends Authenticatable
         'email',
         'phone_number',
         'password',
-        'role'
+        'role',
+        'profile_photo',
     ];
 
     /**
@@ -74,5 +75,14 @@ class User extends Authenticatable
             }
         }
         return true;
+    }
+
+    protected $appends = ['profile_photo_url'];
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->profile_photo 
+            ? asset("storage/" . $this->profile_photo)
+            : null;
     }
 }

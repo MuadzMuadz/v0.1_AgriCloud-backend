@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Field;
 use App\Http\Resources\FieldResource;
+use App\Models\FarmerWarehouse;
 use Illuminate\Http\Request;
 
 class FieldController extends Controller
@@ -31,18 +32,43 @@ class FieldController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request
+        $user = auth()->user();
+
+        // Step 1: Check role
+        if (!$user || $user->role !== 'farmer') {
+            return response()->json(['message' => 'Unauthorized. Only farmers can add fields.'], 403);
+        }
+
+        // Step 2: Validate request
         $validated = $request->validate([
-            'farmer_warehouse_id' => 'required|exists:farmer_warehouses,id',
-            'name' => 'required|string|max:255|unique:fields,name',
-            'area' => 'required|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'area' => 'required|numeric|min:0.1',
+            'warehouse_id' => 'required|integer|exists:farmer_warehouses,id',
         ]);
 
-        // Create a new field
-        $field = Field::create($validated);
+        // Step 3: Check ownership of warehouse
+        $warehouse = FarmerWarehouse::where('id', $validated['warehouse_id'])
+                    ->where('user_id', $user->id)
+                    ->first();
 
-        return new FieldResource($field);
+        if (!$warehouse) {
+            return response()->json(['message' => 'Invalid warehouse or not owned by user.'], 403);
+        }
+
+        // Step 4: Create field
+        $field = $warehouse->fields()->create([
+            'name' => $validated['name'],
+            'area' => $validated['area'],
+            // bisa tambah kolom lain juga
+        ]);
+
+        return response()->json([
+            'message' => 'Field created successfully.',
+            'data' => $field
+        ]);
     }
+
+
 
     /**
      * Display the specified resource.

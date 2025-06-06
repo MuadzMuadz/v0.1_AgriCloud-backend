@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone_number', 100);
             $table->enum('role', ['admin', 'farmer'])->default('farmer');
             $table->string('password');
+            $table->text('profile_photo')->nullable(); 
             $table->rememberToken();
             $table->timestamps();
         });

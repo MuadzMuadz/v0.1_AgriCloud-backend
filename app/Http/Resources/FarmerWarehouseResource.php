@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\User;
 use App\Http\Resources\UserResource;
 
 class FarmerWarehouseResource extends JsonResource
@@ -21,11 +22,13 @@ class FarmerWarehouseResource extends JsonResource
             'name' => $this->name,
             'owner' => [
                 'id' => $this->user_id,
-                // 'name' => $this->user->name,
-                // 'email' => $this->user->email,
-                // 'phone_number' => $this->user->phone_number,
-                // 'role' => $this->user->role,
+                'name' => $this->user->name,
+                'phone number' => $this->user->phone_number,
+                'role' => $this->user->role,
                 ],
+            'photos' => $this->photos->map(function ($photo) {
+                return asset('storage/' . $photo->path);
+            }),
             'location_url' => $this->location_url,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

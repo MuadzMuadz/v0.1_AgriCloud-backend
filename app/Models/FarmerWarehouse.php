@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\Field;
+// use App\Models\Field;
 
 class FarmerWarehouse extends Model
 {
@@ -21,7 +21,7 @@ class FarmerWarehouse extends Model
     /**
      * Get all of the user for the User
      */
-    public function userId()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
@@ -30,7 +30,7 @@ class FarmerWarehouse extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function field()
+    public function fields()
     {
         return $this->hasMany(Field::class, 'farmer_warehouse_id', 'id');
     }

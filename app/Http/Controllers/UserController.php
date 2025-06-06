@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Resources\UserResource;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserRequest;
+// use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -16,28 +20,26 @@ class UserController extends Controller
     {
         // Fetch all users
         $users = User::all();
+        Log::info('Fetched users:', $users->toArray());
         return UserResource::collection($users);
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * store
+     *
+     * @param  mixed $request
+     * @return void
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'phone_number' => 'required|string|max:100',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,farmer',
-        ]);
+        $validated = $request->validated();
 
-        // Hash the password before saving
         $validated['password'] = Hash::make($validated['password']);
 
-        // Create a new user
-        $user = User::create($validated);
+        // Buat user dulu, tanpa profile_photo
+        $user = User::create(Arr::except($validated, ['profile_photo']));
 
         return new UserResource($user);
     }
@@ -54,28 +56,59 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
+     */    
+    /**
+     * update
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
      */
-    public function update(Request $request, string $id)
+    public function update(UserRequest $request, string $id)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
-            'phone_number' => 'sometimes|required|string|max:100',
-            'password' => 'sometimes|required|string|min:8',
-            'role' => 'sometimes|required|in:admin,farmer',
-        ]);
+        
+        $user = User::findOrFail($id);
+        $validated = $request->validated();
+        dd($request->file('profile_photo'));
 
-        // Hash the password if it is being updated
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        // Find and update the user
-        $user = User::findOrFail($id);
+        // // Upload & replace photo
+        // if ($request->hasFile('profile_photo')) {
+        //     dd($request->file('profile_photo'));
+        // }
+        if (!$request->hasFile('profile_photo')) {
+            Log::error('No file received');
+            return response()->json(['error' => 'No file received'], 400);
+        }
+
+        $file = $request->file('profile_photo');
+        Log::info('File received:', [
+            'original_name' => $file->getClientOriginalName(),
+            'mime' => $file->getMimeType(),
+            'size' => $file->getSize(),
+        ]);
+
+        Log::info('Incoming files:', $request->allFiles());
+        Log::info('All inputs:', $request->all());
+        
+        if ($request->hasFile('profile_photo')) {
+            $profilePhoto = $request->file('profile_photo');
+            dd($request->file('profile_photo'));
+            $filename = Str::uuid() . '.' . $profilePhoto->extension();
+            $profilePhoto->move(public_path("users/{$user->id}/profile"), $filename);
+            $user->profile_photo = "users/{$user->id}/profile/" . $filename; 
+        }
+
+        // $path = $request->file('profile_photo')->storeAs("users/{$user->id}/profile", $filename, 'public');
+            // $validated['profile_photo'] = $path;
+
         $user->update($validated);
 
         return new UserResource($user);
+        Log::error('Leave Create Error:'. $e->getMessage());
     }
 
     /**

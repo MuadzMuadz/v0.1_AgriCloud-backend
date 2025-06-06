@@ -15,7 +15,14 @@ class Field extends Model
     protected $fillable = [
         'farmer_warehouse_id',
         'name',
-        'area'
+        'area',
+        'latitude',
+        'longitude',
+        'custom_polygon',
+    ];
+    
+    protected $casts = [
+        'custom_polygon' => 'array'
     ];
 
     /**
