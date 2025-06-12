@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('farmer_warehouse_id')->constrained('farmer_warehouses')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name', 255)->unique();
             $table->decimal('area', 10, 2);
             $table->decimal('latitude', 10, 8)->nullable();

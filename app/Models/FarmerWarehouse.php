@@ -34,4 +34,12 @@ class FarmerWarehouse extends Model
     {
         return $this->hasMany(Field::class, 'farmer_warehouse_id', 'id');
     }
+
+    /**
+     * Get all of the photos for the FarmerWarehouse
+     */
+    public function photos()
+    {
+        return $this->hasMany(WarehouseImage::class, 'farmer_warehouse_id', 'id');
+    }
 }

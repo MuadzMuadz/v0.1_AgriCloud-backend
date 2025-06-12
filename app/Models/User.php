@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use app\Models\FarmerWarehouse;
-use app\Role;
-use Laravel\Sanctum\HasApiTokens as SanctumHasApiTokens;
+use app\Models\Field;
 
 class User extends Authenticatable
 {
@@ -63,6 +62,15 @@ class User extends Authenticatable
         return $this->hasMany(FarmerWarehouse::class, 'user_id', 'id');
     }
 
+    /**
+     * Get all of the field for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function fields()
+    {
+        return $this->hasMany(field::class, 'user_id', 'id');
+    }
     public function authorizeRoles($roles)
     {
         if (is_array($roles)) {

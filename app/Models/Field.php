@@ -13,7 +13,7 @@ class Field extends Model
     use HasFactory;
 
     protected $fillable = [
-        'farmer_warehouse_id',
+        'user_id',
         'name',
         'area',
         'latitude',
@@ -28,9 +28,9 @@ class Field extends Model
     /**
      * Get the farmer_warehouse owns the fields
      */
-    public function farmerwarehouse()
+    public function user()
     {
-        return $this->belongsTo(FarmerWarehouse::class, 'farmer_warehouse_id', 'id');
+        return $this->belongsTo(FarmerWarehouse::class, 'fuser_id', 'id');
     }
     /**
      * Get all of the cycle for the Field

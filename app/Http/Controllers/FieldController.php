@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFieldRequest;
 use App\Models\Field;
 use App\Http\Resources\FieldResource;
-use App\Models\FarmerWarehouse;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class FieldController extends Controller
@@ -30,42 +31,21 @@ class FieldController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreFieldRequest $request)
     {
-        $user = auth()->user();
+        // Get the authenticated user
+        $user = auth()->guard()->user();
 
-        // Step 1: Check role
-        if (!$user || $user->role !== 'farmer') {
-            return response()->json(['message' => 'Unauthorized. Only farmers can add fields.'], 403);
-        }
+        // Validate request using StoreFieldRequest
+        $validated = $request->validated();
 
-        // Step 2: Validate request
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'area' => 'required|numeric|min:0.1',
-            'warehouse_id' => 'required|integer|exists:farmer_warehouses,id',
-        ]);
-
-        // Step 3: Check ownership of warehouse
-        $warehouse = FarmerWarehouse::where('id', $validated['warehouse_id'])
-                    ->where('user_id', $user->id)
-                    ->first();
-
-        if (!$warehouse) {
-            return response()->json(['message' => 'Invalid warehouse or not owned by user.'], 403);
-        }
-
-        // Step 4: Create field
-        $field = $warehouse->fields()->create([
-            'name' => $validated['name'],
-            'area' => $validated['area'],
-            // bisa tambah kolom lain juga
-        ]);
+        // Create the field and associate it with the user
+        $field = $user->fields()->create($validated);
 
         return response()->json([
             'message' => 'Field created successfully.',
-            'data' => $field
-        ]);
+            'data' => new FieldResource($field)
+        ], 201);
     }
 
 

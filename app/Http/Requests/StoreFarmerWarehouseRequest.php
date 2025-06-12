@@ -31,7 +31,8 @@ class StoreFarmerWarehouseRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:farmer_warehouses,name',
             'location_url' => 'required|string',
-            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'photos' => 'nullable|array|max:3',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 

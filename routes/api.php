@@ -11,11 +11,12 @@ use App\Http\Controllers\FarmerWarehouseController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\GrowStagesController;
 use App\Http\Controllers\UserController;
+// use App\Role;
+use Illuminate\Container\Attributes\Auth;
 
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
 
 Route::prefix('auth')->group(function () {
@@ -31,18 +32,17 @@ Route::prefix('auth')->group(function () {
 
 
 // Farmer routes
-
 Route::prefix('farmers')->group(function () {
     // Add farmer-specific routes here in the future
-});
+})->middleware(['auth:sanctum', 'role:farmer']);
 
 // Public routes
-
 Route::prefix('public')->group(function () {
     // Add routes accessible by all users (farmers and public) here in the future
 });
-// Dashboard routes
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth:sanctum');
+
+// admin routes
+Route::get('/admin', [DashboardController::class, 'index'])->middleware('auth:sanctum');
 
 // User routes
 
@@ -76,14 +76,6 @@ Route::get('/cycle-stages/{id}', [CycleStagesController::class, 'show']);
 Route::put('/cycle-stages/{id}', [CycleStagesController::class, 'update']); 
 Route::delete('/cycle-stages/{id}', [CycleStagesController::class, 'destroy']);
 
-// Farmer Warehouse routes
-
-Route::get('/farmer-warehouses', [FarmerWarehouseController::class, 'index']);         
-Route::post('/farmer-warehouses', [FarmerWarehouseController::class, 'store'])->middleware('auth:sanctum');        
-Route::get('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'show']);   
-Route::put('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'update']); 
-Route::delete('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'destroy']);
-
 
 // Field routes
 
@@ -102,3 +94,10 @@ Route::get('/grow-stages/{id}', [GrowStagesController::class, 'show']);
 Route::put('/grow-stages/{id}', [GrowStagesController::class, 'update']); 
 Route::delete('/grow-stages/{id}', [GrowStagesController::class, 'destroy']);
 
+// Farmer Warehouse routes
+
+Route::get('/farmer-warehouses', [FarmerWarehouseController::class, 'index']);         
+Route::post('/farmer-warehouses', [FarmerWarehouseController::class, 'store'])->middleware('auth:sanctum');        
+Route::get('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'show']);   
+Route::put('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'update']); 
+Route::delete('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'destroy']);

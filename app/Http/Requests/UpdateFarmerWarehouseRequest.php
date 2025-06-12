@@ -28,9 +28,10 @@ class UpdateFarmerWarehouseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:farmer_warehouses,name,' . $this->route('id'),
+            'name' => 'required|string|max:255|unique:farmer_warehouses,name,' . $this->route('warehouse'),
             'location_url' => 'nullable|string',
-            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'photos' => 'nullable|array|max:3',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 }

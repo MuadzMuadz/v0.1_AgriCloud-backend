@@ -18,7 +18,6 @@ class FarmerWarehouseResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            // 'user_id' => $this->user_id,
             'name' => $this->name,
             'owner' => [
                 'id' => $this->user_id,
@@ -26,7 +25,7 @@ class FarmerWarehouseResource extends JsonResource
                 'phone number' => $this->user->phone_number,
                 'role' => $this->user->role,
                 ],
-            'photos' => $this->photos->map(function ($photo) {
+            'photos' => $this->WarehouseImage->map(function ($photo) {
                 return asset('storage/' . $photo->path);
             }),
             'location_url' => $this->location_url,

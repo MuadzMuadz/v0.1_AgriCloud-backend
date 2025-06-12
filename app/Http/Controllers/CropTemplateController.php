@@ -40,6 +40,11 @@ class CropTemplateController extends Controller
         // Create a new crop template
         $cropTemplate = CropTemplate::create($validated);
 
+        // gambil data rwstage
+        if ($request->has('grow_stage')) {
+            $cropTemplate->growStage()->sync($request->input('grow_stage'));
+        }
+
         return new CropTemplateResource($cropTemplate);
     }
 

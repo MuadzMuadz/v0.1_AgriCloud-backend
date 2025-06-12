@@ -11,7 +11,8 @@ class StoreFieldRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        // Check if the user is authenticated and has the 'farmer' role
+        return auth()->guard()->check() && auth()->guard()->user()->role === 'farmer';
     }
 
     /**
@@ -22,7 +23,10 @@ class StoreFieldRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'area' => 'required|numeric|min:0.1',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
         ];
     }
 }

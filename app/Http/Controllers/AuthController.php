@@ -75,7 +75,7 @@ class AuthController extends Controller
         $user = auth()->guard()->user();
 
         // Hapus token aktif aja
-        $user->currentAccessToken()?->delete();
+        $user->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully.']);
     }
@@ -131,7 +131,6 @@ class AuthController extends Controller
             $profile_photo = "storage/{$path}";
             $validated['profile_photo'] = $profile_photo;
         }
-
         $user->update($validated);
 
         return new UserResource($user);

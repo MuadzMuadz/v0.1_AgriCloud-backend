@@ -6,7 +6,9 @@ use App\Models\FarmerWarehouse;
 use App\Http\Resources\FarmerWarehouseResource;
 use App\Http\Requests\StoreFarmerWarehouseRequest;
 use App\Http\Requests\UpdateFarmerWarehouseRequest;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Guard;
+use Illuminate\Support\Facades\Storage;
 
 class FarmerWarehouseController extends Controller
 {
@@ -27,15 +29,16 @@ class FarmerWarehouseController extends Controller
     public function store(StoreFarmerWarehouseRequest $request)
     {
         $validated = $request->validated();
-        $validated['user_id'] = auth()->guard()->id();
+        $user = auth()->guard()->user();
+        $validated['user_id'] = $user->id;
+
+        // dd($request->file('photos'));
 
         $warehouse = FarmerWarehouse::create($validated);
 
         if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('farmer_warehouses/photos', 'public');
-                $warehouse->photos()->create(['path' => $path]);
-            }
+            $error = $this->handleWarehouseImages($warehouse, $request->file('photos'));
+            if ($error) return $error;
         }
 
         return new FarmerWarehouseResource($warehouse);
@@ -59,17 +62,13 @@ class FarmerWarehouseController extends Controller
      */
     public function update(UpdateFarmerWarehouseRequest $request, string $id)
     {
+        $user = auth()->guard()->user();
         $validated = $request->validated();
 
         $warehouse = FarmerWarehouse::findOrFail($id);
         $warehouse->update($validated);
 
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('farmer_warehouses/photos', 'public');
-                $warehouse->photos()->create(['path' => $path]);
-            }
-        }
+        
 
         return new FarmerWarehouseResource($warehouse);
     }
@@ -85,4 +84,32 @@ class FarmerWarehouseController extends Controller
 
         return response()->json(['message' => 'Farmer warehouse deleted successfully.'], 200);
     }
+
+    private function handleWarehouseImages($warehouse, $images)
+    {
+        $user = auth()->guard()->user();
+        $warehouse->load('photos');
+        $existingCount = $warehouse->photos->count();
+
+        if ($existingCount + count($images) > 3) {
+            return response()->json(['error' => 'Maksimal 3 gambar diperbolehkan.'], 400);
+        }
+
+        // Delete existing
+        foreach ($warehouse->photos as $image) {
+            Storage::delete("public/users/{$user->id}/warehouse/fw_{$warehouse->id}/{$image->filename}");
+            $image->delete();
+        }
+
+        foreach ($images as $i => $file) {
+            $filename = Str::slug($warehouse->name, '_') . "_".($i+1).".".$file->getClientOriginalExtension();
+            $path = "public/users/{$user->id}/warehouse/fw_{$warehouse->id}/";
+            $file->storeAs($path, $filename);
+
+            $warehouse->photos()->create(['filename' => $filename]);
+        }
+
+        return null;
+    }
+
 }

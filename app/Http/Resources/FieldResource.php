@@ -18,11 +18,9 @@ class FieldResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'location' => [
-                'warehouse_id' => $this->farmer_warehouse_id,
-                'url' => $this->farmerwarehouse->location_url,
                 'latitude' => $this->latitude,        // titik pin utama
                 'longitude' => $this->longitude,      // titik pin utama
-                'custom_polygon' => $this->custom_polygon ?? [],  // polygon area, default kosong kalau null
+                // 'custom_polygon' => $this->custom_polygon ?? [],  // polygon area, default kosong kalau null
             ],
             'area' => $this->area,
             'created_at' => $this->created_at,
