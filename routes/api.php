@@ -101,7 +101,14 @@ Route::prefix('auth')->group(function () {
 // // admin routes
 // Route::get('/admin', [DashboardController::class, 'index'])->middleware('auth:sanctum');
 
+<<<<<<< HEAD
 // // User routes
+=======
+// Farmer routes
+Route::prefix('farmers')->group(function () {
+    // Add farmer-specific routes here in the future
+})->middleware(['auth:sanctum', 'role:farmer']);
+>>>>>>> efd2496 (refactor route and auth and gambar)
 
 // Route::get('/users', [UserController::class, 'index']);       
 // Route::post('/users', [UserController::class, 'store']);   
