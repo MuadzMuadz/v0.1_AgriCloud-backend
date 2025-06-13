@@ -7,8 +7,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use app\Models\FarmerWarehouse;
-use app\Role;
+use App\Models\FarmerWarehouse;
+use App\Role;
 use Laravel\Sanctum\HasApiTokens as SanctumHasApiTokens;
 
 class User extends Authenticatable
@@ -81,7 +81,7 @@ class User extends Authenticatable
 
     public function getProfilePhotoUrlAttribute()
     {
-        return $this->profile_photo 
+        return $this->profile_photo
             ? asset("storage/" . $this->profile_photo)
             : null;
     }
