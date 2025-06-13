@@ -14,13 +14,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-<<<<<<< HEAD
           UserSeeder::class,
           FieldSeeder::class,
           CropTemplateSeeder::class,
-=======
-          UserSeeder::class,  
->>>>>>> efd2496 (refactor route and auth and gambar)
         ]);
         
     }
