@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\GrowStages>
  */
-class GrowStageFactory extends Factory
+class GrowStagesFactory extends Factory
 {
     protected $model = GrowStages::class;
 

@@ -4,8 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\FarmerWarehouse;
 use App\Models\Cycle;
+use App\Models\User;
+/**
+ * Class Field
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property float $area
+ * @property float $latitude
+ * @property float $longitude
+ * @property array|null $custom_polygon
+ */
 
 class Field extends Model
 {

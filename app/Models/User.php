@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use app\Models\FarmerWarehouse;
-use app\Models\Field;
+use App\Models\Field;
 
 class User extends Authenticatable
 {
@@ -69,7 +69,7 @@ class User extends Authenticatable
      */
     public function fields()
     {
-        return $this->hasMany(field::class, 'user_id', 'id');
+        return $this->hasMany(Field::class, 'user_id', 'id');
     }
     public function authorizeRoles($roles)
     {

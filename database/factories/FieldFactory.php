@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
+use App\Models\Field;
 
 
 /**
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class FieldFactory extends Factory
 {
-    protected $model = FieldFactory::class;
+    protected $model = Field::class;
 
     public function definition(): array
     {
@@ -26,8 +28,8 @@ class FieldFactory extends Factory
         // ];
 
         return [
-            'userfarmer_warehouse_id' => UserFactory::factory(),
-            'name' => $this->faker->word(),
+            'user_id' => User::factory(),
+            'name' => $this->faker->unique()->word(),
             'latitude' => $latitude,
             'longitude' => $longitude,
             // 'custom_polygon' => $customPolygon,
