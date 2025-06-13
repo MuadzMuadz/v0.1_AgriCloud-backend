@@ -14,13 +14,27 @@ class CycleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $currentStage = $this->cycleStage->where('status', 'active')->first() ?? $this->cycleStage->first();
+        $currentStage = null;
+        $today = now();
+
+        foreach ($this->cycleStage->sortBy('day_offset')->values() as $index => $stage) {
+            $prevEnd = $index > 0 ? $this->cycleStage[$index - 1]->end_date : null;
+
+            if (
+                ($prevEnd === null || $prevEnd < $today) &&
+                $today <= $stage->end_date
+            ) {
+                $currentStage = $stage;
+                break;
+            }
+        }
+
 
         return [
             'id' => $this->id,
             'name' => optional($this->cropTemplate)->name,
             'description' => optional($this->cropTemplate)->description,
-            'location' => $this->location,
+            'location' => $this->field->location,
             'current_stage' => $currentStage ? [
                 'id' => $currentStage->id,
                 'name' => $currentStage->stage,

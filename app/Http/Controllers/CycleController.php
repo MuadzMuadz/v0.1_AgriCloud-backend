@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Cycle;
 use App\Http\Resources\CycleResource;
+use App\Models\CropTemplate;
 use Illuminate\Http\Request;
+use App\Models\GrowStages;
+use App\Models\CycleStages;
+use App\Models\User;
+use Carbon\Carbon;
 
 class CycleController extends Controller
 {
@@ -31,18 +36,45 @@ class CycleController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->guard()->user();
+        if ($user->role !== 'farmer') {
+            return response()->json(['message' => 'Only farmers can create a cycle.'], 403);
+        }
         // Validate the request
         $validated = $request->validate([
-            'field_id' => 'required|exists:fields,id',
-            'crop_template_id' => 'required|exists:crop_templates,id',
-            'started_at' => 'nullable|date',
-            'status' => 'required|in:pending,active,completed',
+            'field_id' => 'required|integer ',
+            'crop_template_id' => 'required|integer',
+            'start_date' => 'required|date',
+            'status' => 'nullable|in:pending, started, active,completed',
         ]);
 
-        // Create a new cycle
-        $cycle = Cycle::create($validated);
+        
+        // Create Cycle
+        $cycle = Cycle::create([
+            'field_id' => $validated['field_id'],
+            'crop_template_id' => $validated['crop_template_id'],
+            'start_date' => $validated['start_date'],
+            'status' => $validated['status'] ?? 'pending',
+        ]);
+        // Ambil grow stages dari template
+        $growStages = GrowStages::where('crop_template_id', $validated['crop_template_id'])->orderBy('id')->get();
 
-        return new CycleResource($cycle);
+        // Convert to CycleStage
+        foreach ($growStages as $stage) {
+            CycleStages::create([
+                'cycle_id' => $cycle->id,
+                'stage_name' => $stage->stage_name,
+                'expected_action' => $stage->expected_action,
+                'description' => $stage->description,
+                'day_offset' => $stage->day_offset,
+                'started_at' => Carbon::parse($validated['start_date'])->addDays($stage->day_offset),
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Cycle created and stages generated.',
+            'data' => new CycleResource($cycle->load(['cycleStage', 'field', 'CropTemplate']))
+        ], 201);
     }
 
     /**
