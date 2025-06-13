@@ -14,6 +14,13 @@ class CropTemplateController extends Controller
     public function index()
     {
         // Fetch all crop templates with their grow stages
+        $cropTemplates = CropTemplate::all();
+        return CropTemplateResource::collection($cropTemplates);
+    }
+
+    public function templateWithStages()
+    {
+        // Fetch all crop templates with their grow stages
         $cropTemplates = CropTemplate::with('growStage')->get();
         return CropTemplateResource::collection($cropTemplates);
     }
@@ -55,7 +62,24 @@ class CropTemplateController extends Controller
     {
         // Fetch a single crop template with its grow stages
         $cropTemplate = CropTemplate::with('growStage')->findOrFail($id);
-        return new CropTemplateResource($cropTemplate);
+
+        // Prepare detailed grow stage data
+        $growStages = $cropTemplate->growStage->map(function ($stage) {
+            return [
+                'id' => $stage->id,
+                'name' => $stage->name,
+                'description' => $stage->description,
+                'day_offset' => $stage->day_offset,
+                // Tambahkan field lain jika diperlukan
+            ];
+        });
+
+        return response()->json([
+            'data' => [
+                new CropTemplateResource($cropTemplate),
+                'grow_stages' => $growStages,
+                ]
+        ]);
     }
 
     /**

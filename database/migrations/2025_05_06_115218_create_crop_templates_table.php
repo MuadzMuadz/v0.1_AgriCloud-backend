@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('crop_templates', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->unique();
+            $table->enum('jenis', ['1', '2', '3'])->nullable();
             $table->text('description')->nullable();
             $table->text('thumbnail')->nullable();
             $table->timestamps();

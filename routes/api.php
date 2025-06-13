@@ -22,14 +22,18 @@ use Illuminate\Container\Attributes\Auth;
 
 // Role: Public (Guest / Belum Login)
 Route::get('/users/{id}', [UserController::class, 'show']); //Lihat profil user (misal ditampilkan di landing page)              (Berhasil testing)
+
 Route::get('/farmer-warehouses', [FarmerWarehouseController::class, 'index']); //Lihat daftar gudang petani                      (Berhasil testing tapi data masih kosong)
 Route::get('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'show']); //Lihat detail gudang
+
 Route::get('/fields', [FieldController::class, 'index']); //Lihat daftar lahan                                                   (Berhasil testing tapi data masih kosong)
 Route::get('/fields/{id}', [FieldController::class, 'show']); //Lihat detail lahan
+
 Route::get('/crop-templates', [CropTemplateController::class, 'index']); //Lihat daftar template tanaman                         (Berhasil testing tapi data masih kosong)
 Route::get('/crop-templates/{id}', [CropTemplateController::class, 'show']); //Lihat detail template tanaman
 Route::get('/grow-stages', [GrowStagesController::class, 'index']); //Lihat daftar grow stages                                   (Berhasil testing tapi data masih kosong)
 Route::get('/grow-stages/{id}', [GrowStagesController::class, 'show']); //Lihat detail grow stage
+
 Route::get('/cycles', [CycleController::class, 'index']); //Lihat daftar siklus tanam                                            (Berhasil testing tapi data masih kosong)
 Route::get('/cycles/{id}', [CycleController::class, 'show']); //Lihat detail sikus tanam
 Route::get('/cycle-stages', [CycleStagesController::class, 'index']); //Lihat daftar tahapan siklus                              (Berhasil testing tapi data masih kosong)

@@ -23,13 +23,6 @@ class GrowStageResource extends JsonResource
             'description' => $this->description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'crop_template' => [
-                'id' => $this->cropTemplate->id,
-                'name' => $this->cropTemplate->name,
-                'description' => $this->cropTemplate->description,
-                'created_at' => $this->cropTemplate->created_at,
-                'updated_at' => $this->cropTemplate->updated_at,
-            ],
         ];
     }
 }
