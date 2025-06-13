@@ -30,7 +30,7 @@ class Field extends Model
      */
     public function user()
     {
-        return $this->belongsTo(FarmerWarehouse::class, 'fuser_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
     /**
      * Get all of the cycle for the Field

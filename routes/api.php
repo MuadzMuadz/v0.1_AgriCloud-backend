@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\FieldImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -40,9 +41,17 @@ Route::middleware(['auth:sanctum', 'role:farmer'])->group(function () {
     Route::delete('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'destroy']); //Hapus gudang
     Route::post('/farmer-warehouses', [FarmerWarehouseController::class, 'store']); //Buat gudang
 
+    
+    Route::post('/fields', [FieldController::class, 'store']); //Buat Lahan
     Route::put('/fields/{id}', [FieldController::class, 'update']); //Update lahan
     Route::delete('/fields/{id}', [FieldController::class, 'destroy']); //Hapus Lahan
-    Route::post('/fields', [FieldController::class, 'store']); //Buat Lahan
+    Route::post('/fields/{id}/image', [FieldImageController::class, 'store']); //Upload gambar lahan
+    Route::delete('/fields/{id}/image', [FieldImageController::class, 'destroy']); //Hapus gambar lahan     
+    Route::get('/fields/{id}/image', [FieldImageController::class, 'show']); //Lihat gambar lahan
+    Route::get('/fields/{id}/images', [FieldImageController::class, 'index']); //Lihat semua gambar lahan
+    Route::get('/fields/{id}/images/{imageId}', [FieldImageController::class, 'show']); //Lihat gambar lahan berdasarkan ID
+    Route::delete('/fields/{id}/images/{imageId}', [FieldImageController::class, 'destroy']); //Hapus gambar lahan berdasarkan ID
+    Route::get('/fields/{id}/images', [FieldImageController::class, 'index']); //Lihat semua gambar lahan   
 
     Route::post('/cycles', [CycleController::class, 'store']); //Mulai siklus tanam
     Route::put('/cycles/{id}', [CycleController::class, 'update']); //Update siklus tanam
@@ -86,82 +95,3 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']); //Login user
     Route::post('/password/reset', [AuthController::class, 'resetPassword']); // Reset Password
 });
-
-
-// // Farmer routes
-// Route::prefix('farmers')->group(function () {
-//     // Add farmer-specific routes here in the future
-// })->middleware(['auth:sanctum', 'role:farmer']);
-
-// // Public routes
-// Route::prefix('public')->group(function () {
-//     // Add routes accessible by all users (farmers and public) here in the future
-// });
-
-// // admin routes
-// Route::get('/admin', [DashboardController::class, 'index'])->middleware('auth:sanctum');
-
-<<<<<<< HEAD
-// // User routes
-=======
-// Farmer routes
-Route::prefix('farmers')->group(function () {
-    // Add farmer-specific routes here in the future
-})->middleware(['auth:sanctum', 'role:farmer']);
->>>>>>> efd2496 (refactor route and auth and gambar)
-
-// Route::get('/users', [UserController::class, 'index']);       
-// Route::post('/users', [UserController::class, 'store']);   
-// Route::get('/users/{id}', [UserController::class, 'show']);   
-// Route::put('/users/{id}', [UserController::class, 'update']); 
-// Route::delete('/users/{id}', [UserController::class, 'destroy']); 
-
-// // Crop Template routes
-
-// Route::get('/crop-templates', [CropTemplateController::class, 'index']);         
-// Route::post('/crop-templates', [CropTemplateController::class, 'store']);        
-// Route::get('/crop-templates/{id}', [CropTemplateController::class, 'show']);   
-// Route::put('/crop-templates/{id}', [CropTemplateController::class, 'update']); 
-// Route::delete('/crop-templates/{id}', [CropTemplateController::class, 'destroy']);
-
-// // Cycle routes
-
-// Route::get('/cycles', [CycleController::class, 'index']);         
-// Route::post('/cycles', [CycleController::class, 'store']);        
-// Route::get('/cycles/{id}', [CycleController::class, 'show']);
-// Route::put('/cycles/{id}', [CycleController::class, 'update']);
-// Route::delete('/cycles/{id}', [CycleController::class, 'destroy']);
-
-// // Cycle Stages routes
-
-// Route::get('/cycle-stages', [CycleStagesController::class, 'index']);         
-// Route::post('/cycle-stages', [CycleStagesController::class, 'store']);        
-// Route::get('/cycle-stages/{id}', [CycleStagesController::class, 'show']);   
-// Route::put('/cycle-stages/{id}', [CycleStagesController::class, 'update']); 
-// Route::delete('/cycle-stages/{id}', [CycleStagesController::class, 'destroy']);
-
-
-// // Field routes
-
-// Route::get('/fields', [FieldController::class, 'index']);         
-// Route::post('/fields', [FieldController::class, 'store'])->middleware('auth:sanctum');        
-// Route::get('/fields/{id}', [FieldController::class, 'show']);   
-// Route::put('/fields/{id}', [FieldController::class, 'update']); 
-// Route::delete('/fields/{id}', [FieldController::class, 'destroy']);
-
-
-// // Grow Stages routes
-// // Route::apiResource('grow-stages', GrowStagesController::class);
-// Route::get('/grow-stages', [GrowStagesController::class, 'index']);         
-// Route::post('/grow-stages', [GrowStagesController::class, 'store']);        
-// Route::get('/grow-stages/{id}', [GrowStagesController::class, 'show']);   
-// Route::put('/grow-stages/{id}', [GrowStagesController::class, 'update']); 
-// Route::delete('/grow-stages/{id}', [GrowStagesController::class, 'destroy']);
-
-// // Farmer Warehouse routes
-
-// Route::get('/farmer-warehouses', [FarmerWarehouseController::class, 'index']);         
-// Route::post('/farmer-warehouses', [FarmerWarehouseController::class, 'store'])->middleware('auth:sanctum');        
-// Route::get('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'show']);   
-// Route::put('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'update']); 
-// Route::delete('/farmer-warehouses/{id}', [FarmerWarehouseController::class, 'destroy']);
