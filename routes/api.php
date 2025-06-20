@@ -28,11 +28,11 @@ Route::get('/cycles/{id}/stages', [CycleStagesController::class, 'listByCycle'])
 // COMMON RESOURCES (Open/Public)
 // -------------------------
 
-Route::get('/crop-templates', [CropTemplateController::class, 'index']);
+Route::get('/crop_templates', [CropTemplateController::class, 'index']);
 Route::get('/crop-templates/{id}', [CropTemplateController::class, 'show']);
 
-Route::get('/grow-stages', [GrowStagesController::class, 'index']);
-Route::get('/grow-stages/{id}', [GrowStagesController::class, 'show']);
+// Route::get('/grow-stages', [GrowStagesController::class, 'index']);
+// Route::get('/grow-stages/{id}', [GrowStagesController::class, 'show']);
 
 Route::get('/cycle-stages', [CycleStagesController::class, 'index']);
 Route::get('/cycle-stages/{id}', [CycleStagesController::class, 'show']);
@@ -64,18 +64,18 @@ Route::middleware(['auth:sanctum', farmer::class])->group(function()
     // FIELDS
     Route::get('/myfields', [FieldController::class, 'myFields']); //Lihat lahan milik user yang sedang login
     Route::post('/myfields', [FieldController::class, 'store']); //Buat Lahan 
-    Route::put('/fields/{id}', [FieldController::class, 'update']); //Update lahan
-    Route::delete('/fields/{id}', [FieldController::class, 'destroy']); //Hapus Lahan
+    Route::put('/myfields/{id}', [FieldController::class, 'update']); //Update lahan
+    Route::delete('/myfields/{id}', [FieldController::class, 'destroy']); //Hapus Lahan
 
     // CYCLES
-    Route::post('/cycles', [CycleController::class, 'store']); //Mulai siklus tanam
-    Route::put('/cycles/{id}', [CycleController::class, 'update']); //Update siklus tanam
-    Route::delete('/cycles/{id}', [CycleController::class, 'destroy']); //Hapus siklus tanam
+    Route::post('/mycycles', [CycleController::class, 'store']); //Mulai siklus tanam
+    Route::put('/mycycles/{id}', [CycleController::class, 'update']); //Update siklus tanam
+    Route::delete('/mycycles/{id}', [CycleController::class, 'destroy']); //Hapus siklus tanam
 
     // CYCLE STAGES
-    Route::post('/cycle-stages', [CycleStagesController::class, 'store']); //Tambah tahapan siklus
-    Route::put('/cycle-stages/{id}', [CycleStagesController::class, 'update']); //Update tahapan
-    Route::delete('/cycle-stages/{id}', [CycleStagesController::class, 'destroy']); //Hapus Tahapan
+    Route::post('/mycycle-stages', [CycleStagesController::class, 'store']); //Tambah tahapan siklus
+    Route::put('/mycycle-stages/{id}', [CycleStagesController::class, 'update']); //Update tahapan
+    Route::delete('/mycycle-stages/{id}', [CycleStagesController::class, 'destroy']); //Hapus Tahapan
 });
 
 // -------------------------
