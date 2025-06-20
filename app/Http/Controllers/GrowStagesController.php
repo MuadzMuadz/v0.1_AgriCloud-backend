@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\GrowStages;
 use App\Http\Resources\GrowStageResource;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreGrowStagesRequest;
+use App\Http\Requests\UpdateGrowStagesRequest;
 
 class GrowStagesController extends Controller
 {
@@ -29,16 +30,10 @@ class GrowStagesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreGrowStagesRequest $request)
     {
         // Validate the request
-        $validated = $request->validate([
-            'crop_template_id' => 'required|exists:crop_templates,id',
-            'stage_name' => 'required|string|max:255',
-            'day_offset' => 'required|integer|min:0',
-            'expected_action' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         // Create a new grow stage
         $growStage = GrowStages::create($validated);
@@ -66,17 +61,18 @@ class GrowStagesController extends Controller
 
     /**
      * Update the specified resource in storage.
+     */    
+    /**
+     * update
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateGrowStagesRequest $request, string $id)
     {
         // Validate the request
-        $validated = $request->validate([
-            'crop_template_id' => 'required|exists:crop_templates,id',
-            'stage_name' => 'required|string|max:255',
-            'day_offset' => 'required|integer|min:0',
-            'expected_action' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         // Find and update the grow stage
         $growStage = GrowStages::findOrFail($id);

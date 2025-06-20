@@ -67,9 +67,6 @@ class AuthController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     */    
-    /**
-     * logout
      *
      * @param  mixed $request
      * @return void

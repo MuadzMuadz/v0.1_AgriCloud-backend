@@ -11,7 +11,7 @@ class StoreCropTemplateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->guard()->check() && auth()->guard()->user()->role === 'admin';
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreCropTemplateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255|unique:crop_templates,name',
+            'jenis' => 'required|string|tanaman pangan,hortikultura,perkebunan,biofarmaka',
+            'description' => 'nullable|string',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Maksimal 2MB
         ];
     }
 }

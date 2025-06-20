@@ -24,9 +24,9 @@ class DashboardController extends Controller
             $query->where('user_id', $user->id);
         })->get(); // Fetch fields associated with farmer warehouses linked to the user
 
-        $warehouses = FarmerWarehouse::where('user_id', $user->id)->get(); // Fetch warehouses directly linked to the user
+        // $warehouses = FarmerWarehouse::where('user_id', $user->id)->get(); // Fetch warehouses directly linked to the user
 
-        $cycles = Cycle::whereHas('field.farmerWarehouse', function ($query) use ($user) {
+        $cycles = Cycle::whereHas('field.user', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->with('stages')->get(); // Fetch cycles associated with fields linked to farmer warehouses of the user
 
@@ -35,7 +35,7 @@ class DashboardController extends Controller
             'message' => 'Dashboard data retrieved successfully',
             'data' => [
                 'fields' => $fields, // List of fields to be displayed in a table
-                'warehouses' => $warehouses, // List of warehouses to be displayed in a table
+                // 'warehouses' => $warehouses, // List of warehouses to be displayed in a table
                 'cycles' => $cycles->map(function ($cycle) {
                     // Map the cycle data to include only necessary fields
                     // and the stages associated with each cycle

@@ -16,7 +16,7 @@ class CycleStages extends Model
         'day_offset',
         'expected_action',
         'description',
-        'started_at',
+        'start_at',
     ];
 
      /**

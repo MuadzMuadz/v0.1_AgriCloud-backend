@@ -14,23 +14,27 @@ use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of all user.
      */
     public function index()
     {
         // Fetch all users
         $users = User::all();
-        Log::info('Fetched users:', $users->toArray());
+
         return UserResource::collection($users);
     }
+    /**
+     * Display a listing of farmers.
+     */
+    public function farmerList()
+    {
+        // Fetch all users
+        $users = User::where('role', 'farmer')->get();
 
+        return UserResource::collection($users);
+    }
     /**
      * Store a newly created resource in storage.
-     *
-     * store
-     *
-     * @param  mixed $request
-     * @return void
      */
     public function store(UserRequest $request)
     {
@@ -56,16 +60,13 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
-     */    
-    /**
      * update
      *
      * @param  mixed $request
      * @param  mixed $id
      * @return void
      */
-    public function update(UserRequest $request, string $id)
-    {
+    public function update(UserRequest $request, string $id){
         
         $user = User::findOrFail($id);
         $validated = $request->validated();
@@ -74,25 +75,6 @@ class UserController extends Controller
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
-
-        // // Upload & replace photo
-        // if ($request->hasFile('profile_photo')) {
-        //     dd($request->file('profile_photo'));
-        // }
-        if (!$request->hasFile('profile_photo')) {
-            Log::error('No file received');
-            return response()->json(['error' => 'No file received'], 400);
-        }
-
-        $file = $request->file('profile_photo');
-        Log::info('File received:', [
-            'original_name' => $file->getClientOriginalName(),
-            'mime' => $file->getMimeType(),
-            'size' => $file->getSize(),
-        ]);
-
-        Log::info('Incoming files:', $request->allFiles());
-        Log::info('All inputs:', $request->all());
         
         if ($request->hasFile('profile_photo')) {
             $profilePhoto = $request->file('profile_photo');
@@ -101,9 +83,6 @@ class UserController extends Controller
             $profilePhoto->move(public_path("users/{$user->id}/profile"), $filename);
             $user->profile_photo = "users/{$user->id}/profile/" . $filename; 
         }
-
-        // $path = $request->file('profile_photo')->storeAs("users/{$user->id}/profile", $filename, 'public');
-            // $validated['profile_photo'] = $path;
 
         $user->update($validated);
 

@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCropTemplateRequest extends FormRequest
+class StoreCropTemplateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->guard()->check() && auth()->guard()->user()->role === 'admin';
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateCropTemplateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'nullable|string|max:255|unique:crop_templates,name',
+            'jenis' => 'nullable|string|tanaman pangan,hortikultura,perkebunan,biofarmaka',
+            'description' => 'nullable|string',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Maksimal 2MB
         ];
     }
 }

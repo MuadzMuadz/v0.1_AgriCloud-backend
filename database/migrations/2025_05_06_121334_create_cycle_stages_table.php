@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('day_offset')->unsigned()->nullable();
             $table->string('expected_action');
             $table->text('description')->nullable();
-            $table->timestamp('started_at');
+            $table->timestamp('start_at');
             $table->timestamps();
         });
     }

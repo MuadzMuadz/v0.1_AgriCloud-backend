@@ -51,17 +51,6 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    /**
-     * Get all of the farmerwarehouse for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function farmerwarehouse()
-    {
-        return $this->hasMany(FarmerWarehouse::class, 'user_id', 'id');
-    }
-
     /**
      * Get all of the field for the User
      *
@@ -71,6 +60,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Field::class, 'user_id', 'id');
     }
+    
     public function authorizeRoles($roles)
     {
         if (is_array($roles)) {

@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('fields', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('name', 255)->unique();
+            $table->string('name', 255);
+            $table->unique(['name', 'user_id'], 'unique_field_name_per_user');
+            $table->string('description', 1000)->nullable();
+            $table->string('thumbnail')->nullable();
             $table->decimal('area', 10, 2);
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();

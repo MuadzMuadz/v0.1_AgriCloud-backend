@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cycle;
+use App\Http\Requests\StoreCycleRequest;
+use App\Http\Requests\UpdateCycleRequest;
 use App\Http\Resources\CycleResource;
-use App\Models\CropTemplate;
-use Illuminate\Http\Request;
+
+use App\Models\Cycle;
 use App\Models\GrowStages;
 use App\Models\CycleStages;
-use App\Models\User;
+
 use Carbon\Carbon;
 
 class CycleController extends Controller
@@ -19,43 +20,34 @@ class CycleController extends Controller
     public function index()
     {
         // Fetch all cycles with their related crop templates and stages
-        $cycles = Cycle::with(['cropTemplate', 'cycleStage'])->get();
+        $cycles = Cycle::all();
         return CycleResource::collection($cycles);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function cycleWithStage()
     {
-        //
+        // Fetch all cycles with their related crop templates and stages
+        $cycles = Cycle::with(['cropTemplate', 'cycleStage'])->get();
+        return CycleResource::collection($cycles);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCycleRequest $request)
     {
         $user = auth()->guard()->user();
-        if ($user->role !== 'farmer') {
-            return response()->json(['message' => 'Only farmers can create a cycle.'], 403);
-        }
+        
         // Validate the request
-        $validated = $request->validate([
-            'field_id' => 'required|integer ',
-            'crop_template_id' => 'required|integer',
-            'start_date' => 'required|date',
-            'status' => 'nullable|in:pending, started, active,completed',
-        ]);
+        $validated = $request->validated();
 
         
         // Create Cycle
-        $cycle = Cycle::create([
-            'field_id' => $validated['field_id'],
-            'crop_template_id' => $validated['crop_template_id'],
-            'start_date' => $validated['start_date'],
-            'status' => $validated['status'] ?? 'pending',
-        ]);
+        $cycle = Cycle::create($validated);
+
         // Ambil grow stages dari template
         $growStages = GrowStages::where('crop_template_id', $validated['crop_template_id'])->orderBy('id')->get();
 
@@ -67,7 +59,7 @@ class CycleController extends Controller
                 'expected_action' => $stage->expected_action,
                 'description' => $stage->description,
                 'day_offset' => $stage->day_offset,
-                'started_at' => Carbon::parse($validated['start_date'])->addDays($stage->day_offset),
+                'start_at' => Carbon::parse($validated['start_date'])->addDays($stage->day_offset),
             ]);
         }
 
@@ -90,7 +82,7 @@ class CycleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function updateStage(string $id)
     {
         //
     }
@@ -98,15 +90,10 @@ class CycleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateCycleRequest $request, string $id)
     {
         // Validate the request
-        $validated = $request->validate([
-            'field_id' => 'required|exists:fields,id',
-            'crop_template_id' => 'required|exists:crop_templates,id',
-            'started_at' => 'nullable|date',
-            'status' => 'required|in:pending,active,completed',
-        ]);
+        $validated = $request->validated();
 
         // Find and update the cycle
         $cycle = Cycle::findOrFail($id);

@@ -26,6 +26,8 @@ class Field extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'description',
+        'thumbnail',
         'area',
         'latitude',
         'longitude',
@@ -36,9 +38,7 @@ class Field extends Model
         'custom_polygon' => 'array'
     ];
 
-    /**
-     * Get the farmer_warehouse owns the fields
-     */
+    
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

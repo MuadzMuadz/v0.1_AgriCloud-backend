@@ -11,7 +11,7 @@ class StoreCycleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->guard()->check() && auth()->guard()->user()->role === 'farmer';
     }
 
     /**
@@ -22,7 +22,11 @@ class StoreCycleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'crop_template_id' => 'required|integer|exists:crop_templates,id',
+            'field_id' => 'required|integer |exists:fields,id ',
+            'crop_template_id' => 'required|integer',
+            'start_date' => 'required|date',
+            'status' => 'nullable|in:pending, started, active,completed',
         ];
     }
 }

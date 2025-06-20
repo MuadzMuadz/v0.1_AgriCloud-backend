@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CycleStages;
 use App\Http\Resources\CycleStageResource;
+use App\Models\GrowStages;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CycleStagesController extends Controller
@@ -14,16 +16,18 @@ class CycleStagesController extends Controller
     public function index()
     {
         // Fetch all cycle stages with their related cycles
-        $cycleStages = CycleStages::with('cycle')->get();
+        $cycleStages = CycleStages::all();
         return CycleStageResource::collection($cycleStages);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function stageByCycle()
     {
-        //
+        $cycleStages = CycleStages::with('cycle')->get();
+        
+        return CycleStageResource::collection($cycleStages);
     }
 
     /**
@@ -31,20 +35,20 @@ class CycleStagesController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'cycle_id' => 'required|exists:cycles,id',
-            'stage_name' => 'required|string|max:255',
-            'day_offset' => 'nullable|integer',
-            'expected_action' => 'required|string',
-            'description' => 'nullable|string',
-            'started_at' => 'required|date',
-        ]);
+        $cycle = Cycle::class()
+        $growStages = GrowStages::where('crop_template_id', $validated['crop_template_id'])->orderBy('id')->get();
 
-        // Create a new cycle stage
-        $cycleStage = CycleStages::create($validated);
-
-        return new CycleStageResource($cycleStage);
+        // Convert to CycleStage
+        foreach ($growStages as $stage) {
+            CycleStages::create([
+                'cycle_id' => $cycle->id,
+                'stage_name' => $stage->stage_name,
+                'expected_action' => $stage->expected_action,
+                'description' => $stage->description,
+                'day_offset' => $stage->day_offset,
+                'start_at' => Carbon::parse($validated['start_date'])->addDays($stage->day_offset),
+            ]);
+        }
     }
 
     /**
@@ -60,7 +64,7 @@ class CycleStagesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function updateStage(string $id)
     {
         //
     }

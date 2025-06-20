@@ -17,12 +17,18 @@ class FieldResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'description' => $this->description,
+            'thumbnail' => $this->thumbnail ? asset('storage/' . $this->thumbnail) : null, // URL lengkap untuk thumbnail
             'location' => [
                 'latitude' => $this->latitude,        // titik pin utama
                 'longitude' => $this->longitude,      // titik pin utama
                 // 'custom_polygon' => $this->custom_polygon ?? [],  // polygon area, default kosong kalau null
             ],
             'area' => $this->area,
+            'owner' => [
+                'id' => $this->user_id,
+                'name' => $this->user ? $this->user->name : 'Unknown',
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
