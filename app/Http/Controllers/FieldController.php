@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Field;
 use App\Http\Requests\StoreFieldRequest;
+use App\Http\Requests\UpdateFieldRequest;
 use App\Http\Resources\FieldResource;
 
 use Illuminate\Http\Request;
@@ -51,8 +52,14 @@ class FieldController extends Controller
      */
     public function store(StoreFieldRequest $request){
         $user = auth()->guard()->user();
-        $validated = $request->validated();
 
+        // dd([
+        //     'validated' => $request->validated(),
+        //     'has_file' => $request->hasFile('thumbnail'),
+        //     'file' => $request->file('thumbnail'),
+        // ]);
+
+        $validated = $request->validated();
         if (Field::where('name', $validated['name'])->where('user_id', $user->id)->exists()) {
             return response()->json(['message' => 'Field with this name already exists.'], 409);
         }
@@ -71,15 +78,10 @@ class FieldController extends Controller
             Storage::disk('public')->put($path, file_get_contents($file));
 
             // Save the image path to the field
-            $validated['image_path'] = $path;
+            $field->update(['thumbnail' => $path]);
             
-        } else {
-            $validated['image_path'] = null; // Set to null if no image is uploaded
         }
-        // Update the field with the image path if it was uploaded
-        $field->image_path = $validated['image_path'] ?? null;
-        
-    
+
         return new FieldResource($field);
     }
 
@@ -109,19 +111,35 @@ class FieldController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id){
+    public function update(UpdateFieldRequest $request, string $id){
         $user = auth()->guard()->user();
-        // Check if the user is authorized to update this field
-        
-        // Validate the request
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:fields,name,' . $id,
-            'area' => 'required|numeric|min:0',
-        ]);
+        // dd($request->all()); 
 
-        // Find and update the field
-        $field = Field::findOrFail($id);
+        $validated = $request->validated();
+
+        $field = Field::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validated();
+        if (isset($validated['name']) && Field::where('name', $validated['name'])->where('user_id', $user->id)->where('id', '!=', $id)->exists()) {
+            return response()->json(['message' => 'Field with this name already exists.'], 409);
+        }
+        // Update the field with validated data
         $field->update($validated);
+
+        if ($request->hasFile('thumbnail')) {
+            // Handle the image upload
+            $file = $request->file('thumbnail');
+            $slugName = Str::slug($field->name);
+            $ext = $file->getClientOriginalExtension();
+            $fileName = "{$slugName}.{$ext}";
+            $path = "users/{$user->id}/lahan/{$slugName}/{$fileName}";
+
+            // Store the file in the public disk
+            Storage::disk('public')->put($path, file_get_contents($file));
+
+            // Save the image path to the field
+            $field->update(['thumbnail' => $path]);
+        }
 
         return new FieldResource($field);
     }

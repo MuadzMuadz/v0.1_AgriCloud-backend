@@ -10,17 +10,25 @@ class CropTemplateSeeder extends Seeder
 {
     public function run(): void
     {
-        // Generate 10 data crop template
-        CropTemplate::factory()->count(10)->create()->each(function ($cropTemplate) {
-            // Generate 3 grow stages for each crop template
-            $cropTemplate->growStage()->createMany(
-                // Untuk tiap crop template, generate 3-5 grow stages
-                GrowStages::factory()
-                    ->count(rand(3, 5))
-                    ->make([
-                        'crop_template_id' => $cropTemplate->id,
-                    ])->toArray()
-            );
-        });
+        CropTemplate::factory()
+        ->has(
+            GrowStages::factory()->count(5)->sequence(
+                ['day_offset' => 0],
+                ['day_offset' => 5],
+                ['day_offset' => 10],
+                ['day_offset' => 15],
+                ['day_offset' => 20],
+            )
+        )
+        ->create();
+        // You can add more CropTemplates with different GrowStages if needed
+        CropTemplate::factory()
+            ->has(GrowStages::factory()->count(3)->sequence(
+                ['day_offset' => 0],
+                ['day_offset' => 7],
+                ['day_offset' => 14],
+            ))
+            ->create();
+
     }
 }

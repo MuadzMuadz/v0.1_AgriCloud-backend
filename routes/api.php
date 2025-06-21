@@ -22,7 +22,8 @@ Route::get('farmers/{id}', [UserController::class, 'show']);
 Route::get('/farmers/{id}/fields', [FieldController::class, 'listByFarmer']);
 Route::get('/fields/{id}/active-cycle', [CycleController::class, 'activeByField']);
 Route::get('/cycles/{id}', [CycleController::class, 'show']);
-Route::get('/cycles/{id}/stages', [CycleStagesController::class, 'listByCycle']);
+
+// Route::get('/cycles/{id}/stages', [CycleStagesController::class, 'listByCycle']);
 
 // -------------------------
 // COMMON RESOURCES (Open/Public)
@@ -64,18 +65,21 @@ Route::middleware(['auth:sanctum', farmer::class])->group(function()
     // FIELDS
     Route::get('/myfields', [FieldController::class, 'myFields']); //Lihat lahan milik user yang sedang login
     Route::post('/myfields', [FieldController::class, 'store']); //Buat Lahan 
+    Route::get('/myfields/{id}', [FieldController::class, 'show']); //Lihat detail lahan
     Route::put('/myfields/{id}', [FieldController::class, 'update']); //Update lahan
     Route::delete('/myfields/{id}', [FieldController::class, 'destroy']); //Hapus Lahan
 
     // CYCLES
+    Route::get('/mycycles', [CycleController::class, 'index']); //Lihat siklus tanam milik user yang sedang login
     Route::post('/mycycles', [CycleController::class, 'store']); //Mulai siklus tanam
     Route::put('/mycycles/{id}', [CycleController::class, 'update']); //Update siklus tanam
     Route::delete('/mycycles/{id}', [CycleController::class, 'destroy']); //Hapus siklus tanam
 
     // CYCLE STAGES
-    Route::post('/mycycle-stages', [CycleStagesController::class, 'store']); //Tambah tahapan siklus
-    Route::put('/mycycle-stages/{id}', [CycleStagesController::class, 'update']); //Update tahapan
-    Route::delete('/mycycle-stages/{id}', [CycleStagesController::class, 'destroy']); //Hapus Tahapan
+    // Route::get('/mycycle-stages', [CycleStagesController::class, 'index']); //Lihat tahapan siklus tanam milik user yang sedang login
+    // Route::post('/mycycle-stages', [CycleStagesController::class, 'store']); //Tambah tahapan siklus
+    // Route::put('/mycycle-stages/{id}', [CycleStagesController::class, 'update']); //Update tahapan
+    // Route::delete('/mycycle-stages/{id}', [CycleStagesController::class, 'destroy']); //Hapus Tahapan
 });
 
 // -------------------------
@@ -84,6 +88,7 @@ Route::middleware(['auth:sanctum', farmer::class])->group(function()
 
 Route::middleware(['auth:sanctum', admin::class])->group(function()
 {
+    // FIELD
     Route::get('fields', [FieldController::class, 'index']);
     Route::get('fields/{id}', [FieldController::class, 'show']);
 
@@ -105,6 +110,11 @@ Route::middleware(['auth:sanctum', admin::class])->group(function()
     Route::post('/grow-stages', [GrowStagesController::class, 'store']);
     Route::put('/grow-stages/{id}', [GrowStagesController::class, 'update']);
     Route::delete('/grow-stages/{id}', [GrowStagesController::class, 'destroy']);
+
+    // CYCLE 
+    Route::get('/cycles', [CycleController::class, 'index']);
+    Route::get('/cycles/{id}', [CycleController::class, 'show']);
+
 });
 
 // //Role: Authenticated (Farmer dan Admin)

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CropTemplate;
 use App\Models\CycleStages;
+use App\Models\Field;
+use Carbon\Carbon;
 
 class Cycle extends Model
 {
@@ -35,5 +37,27 @@ class Cycle extends Model
     public function cycleStage()
     {
         return $this->hasMany(CycleStages::class, 'cycle_id', 'id');
+    }
+
+    public function refreshStatusIfNeeded(): void
+    {
+        $today = now();
+        $start = Carbon::parse($this->start_date);
+        $lastStage = $this->cycleStage->sortByDesc('day_offset')->first();
+
+        $status = $this->status;
+
+        if ($today->lt($start)) {
+            $status = 'pending';
+        } elseif ($lastStage && $today->gt($lastStage->start_at)) {
+            $status = 'completed';
+        } else {
+            $status = 'active';
+        }
+
+        if ($this->status !== $status) {
+            $this->status = $status;
+            $this->save();
+        }
     }
 }

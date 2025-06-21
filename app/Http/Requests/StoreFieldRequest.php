@@ -31,7 +31,7 @@ class StoreFieldRequest extends FormRequest
             })],
             'description' => 'nullable|string|max:1000',
             'area' => 'required|numeric|min:0.1',
-            'thumbnail' => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'custom_polygon' => 'nullable|json'

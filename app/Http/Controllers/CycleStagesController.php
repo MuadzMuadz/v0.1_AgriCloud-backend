@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CycleStages;
-use App\Http\Resources\CycleStageResource;
-use App\Models\GrowStages;
-use Carbon\Carbon;
+// use App\Models\CycleStages;
+// use App\Http\Resources\CycleStageResource;
 use Illuminate\Http\Request;
 
 class CycleStagesController extends Controller
@@ -16,8 +14,8 @@ class CycleStagesController extends Controller
     public function index()
     {
         // Fetch all cycle stages with their related cycles
-        $cycleStages = CycleStages::all();
-        return CycleStageResource::collection($cycleStages);
+        // $cycleStages = CycleStages::all();
+        // return CycleStageResource::collection($cycleStages);
     }
 
     /**
@@ -25,9 +23,9 @@ class CycleStagesController extends Controller
      */
     public function stageByCycle()
     {
-        $cycleStages = CycleStages::with('cycle')->get();
+        // $cycleStages = CycleStages::with('cycle')->get();
         
-        return CycleStageResource::collection($cycleStages);
+        // return CycleStageResource::collection($cycleStages);
     }
 
     /**
@@ -35,20 +33,20 @@ class CycleStagesController extends Controller
      */
     public function store(Request $request)
     {
-        $cycle = Cycle::class()
-        $growStages = GrowStages::where('crop_template_id', $validated['crop_template_id'])->orderBy('id')->get();
+        // $cycle = Cycle::class()
+        // // $growStages = GrowStages::where('crop_template_id', $validated['crop_template_id'])->orderBy('id')->get();
 
-        // Convert to CycleStage
-        foreach ($growStages as $stage) {
-            CycleStages::create([
-                'cycle_id' => $cycle->id,
-                'stage_name' => $stage->stage_name,
-                'expected_action' => $stage->expected_action,
-                'description' => $stage->description,
-                'day_offset' => $stage->day_offset,
-                'start_at' => Carbon::parse($validated['start_date'])->addDays($stage->day_offset),
-            ]);
-        }
+        // // Convert to CycleStage
+        // foreach ($growStages as $stage) {
+        //     CycleStages::create([
+        //         'cycle_id' => $cycle->id,
+        //         'stage_name' => $stage->stage_name,
+        //         'expected_action' => $stage->expected_action,
+        //         'description' => $stage->description,
+        //         'day_offset' => $stage->day_offset,
+        //         'start_at' => Carbon::parse($validated['start_date'])->addDays($stage->day_offset),
+        //     ]);
+        // }
     }
 
     /**
@@ -57,8 +55,8 @@ class CycleStagesController extends Controller
     public function show(string $id)
     {
         // Fetch a single cycle stage with its related cycle
-        $cycleStage = CycleStages::with('cycle')->findOrFail($id);
-        return new CycleStageResource($cycleStage);
+        // $cycleStage = CycleStages::with('cycle')->findOrFail($id);
+        // return new CycleStageResource($cycleStage);
     }
 
     /**
@@ -75,20 +73,20 @@ class CycleStagesController extends Controller
     public function update(Request $request, string $id)
     {
         // Validate the request
-        $validated = $request->validate([
-            'cycle_id' => 'required|exists:cycles,id',
-            'stage_name' => 'required|string|max:255',
-            'day_offset' => 'nullable|integer',
-            'expected_action' => 'required|string',
-            'description' => 'nullable|string',
-            'started_at' => 'required|date',
-        ]);
+        // $validated = $request->validate([
+        //     'cycle_id' => 'required|exists:cycles,id',
+        //     'stage_name' => 'required|string|max:255',
+        //     'day_offset' => 'nullable|integer',
+        //     'expected_action' => 'required|string',
+        //     'description' => 'nullable|string',
+        //     'started_at' => 'required|date',
+        // ]);
 
-        // Find and update the cycle stage
-        $cycleStage = CycleStages::findOrFail($id);
-        $cycleStage->update($validated);
+        // // Find and update the cycle stage
+        // $cycleStage = CycleStages::findOrFail($id);
+        // $cycleStage->update($validated);
 
-        return new CycleStageResource($cycleStage);
+        // return new CycleStageResource($cycleStage);
     }
 
     /**
@@ -96,10 +94,10 @@ class CycleStagesController extends Controller
      */
     public function destroy(string $id)
     {
-        // Find and delete the cycle stage
-        $cycleStage = CycleStages::findOrFail($id);
-        $cycleStage->delete();
+        // // Find and delete the cycle stage
+        // $cycleStage = CycleStages::findOrFail($id);
+        // $cycleStage->delete();
 
-        return response()->json(['message' => 'Cycle stage deleted successfully.'], 200);
+        // return response()->json(['message' => 'Cycle stage deleted successfully.'], 200);
     }
 }

@@ -14,41 +14,62 @@ class CycleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $currentStage = null;
+        // Pastikan status selalu di-refresh sebelum mengembalikan data
+        $this->refreshStatusIfNeeded();
+        
+        // Cek apakah ada stage yang sudah lewat
+        
         $today = now();
+        $startDate = $this->start_date;
+        $endDate = optional($this->cycleStage->sortByDesc('day_offset')->first())->start_at;
 
-        foreach ($this->cycleStage->sortBy('day_offset')->values() as $index => $stage) {
-            $prevEnd = $index > 0 ? $this->cycleStage[$index - 1]->end_date : null;
+        // $status = 'pending';
+        $currentStage = null;
 
-            if (
-                ($prevEnd === null || $prevEnd < $today) &&
-                $today <= $stage->end_date
-            ) {
-                $currentStage = $stage;
-                break;
+        if ($startDate && $today->lt($startDate)) {
+            $status = 'pending';
+        } elseif ($startDate && $today->gte($startDate)) {
+            // Sudah mulai, cari current stage
+            $status = 'active';
+
+            $sortedStages = $this->cycleStage->sortBy('day_offset')->values();
+
+            foreach ($sortedStages as $index => $stage) {
+                $startAt = $stage->start_at;
+                $nextStart = optional($sortedStages->get($index + 1))->start_at;
+
+                if ($startAt && $today->gte($startAt) && (!$nextStart || $today->lt($nextStart))) {
+                    $currentStage = $stage;
+                    break;
+                }
+            }
+
+            // Optional: completed
+            if ($endDate && $today->gt($endDate)) {
+                $status = 'completed';
+                $currentStage = null;
             }
         }
-
 
         return [
             'id' => $this->id,
             'name' => optional($this->cropTemplate)->name,
             'description' => optional($this->cropTemplate)->description,
-            'location' => $this->field->location,
+            'location' => $this->field->name,
+            'status' => $status,
             'current_stage' => $currentStage ? [
-                'id' => $currentStage->id,
-                'name' => $currentStage->stage,
+                'name' => $currentStage->stage_name,
                 'description' => $currentStage->description,
-                'start_date' => $currentStage->start_date,
-                'end_date' => $currentStage->end_date,
+                'start_date' => $currentStage->start_at,
+                'end_date' => optional($this->cycleStage->sortBy('day_offset')->get($this->cycleStage->search($currentStage) + 1))->start_at, // = next stage's start_at
             ] : null,
             'stages' => $this->cycleStage->map(function ($stage) {
                 return [
                     'id' => $stage->id,
-                    'name' => $stage->stage,
+                    'name' => $stage->stage_name,
                     'description' => $stage->description,
-                    'start_date' => $stage->start_date,
-                    'end_date' => $stage->end_date,
+                    'start_date' => $stage->start_at,
+                    // 'end_date' => $stage->end_date,
                 ];
             }),
             'created_at' => $this->created_at,

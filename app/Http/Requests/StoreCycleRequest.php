@@ -23,8 +23,7 @@ class StoreCycleRequest extends FormRequest
     {
         return [
             'crop_template_id' => 'required|integer|exists:crop_templates,id',
-            'field_id' => 'required|integer |exists:fields,id ',
-            'crop_template_id' => 'required|integer',
+            'field_id' => 'required|integer |exists:fields,id',
             'start_date' => 'required|date',
             'status' => 'nullable|in:pending, started, active,completed',
         ];

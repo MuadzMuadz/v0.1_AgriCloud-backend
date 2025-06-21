@@ -19,7 +19,7 @@ class CycleStageFactory extends Factory
         return [
             'cycle_id' => Cycle::factory(),
             'grow_stage_id' => GrowStages::factory(),
-            'started_at' => $this->faker->dateTime,
+            'start_at' => $this->faker->dateTime,
         ];
     }
 }

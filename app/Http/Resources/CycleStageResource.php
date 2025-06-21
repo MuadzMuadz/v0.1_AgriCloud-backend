@@ -17,7 +17,6 @@ class CycleStageResource extends JsonResource
         return [
             'id' => $this->id,
             'cycle' => [
-                'cycle_id' => $this->cycle->id,
                 'cycle_name' => $this->cycle->name,
                 'field' => new FieldResource($this->cycle->field), // Assuming 'field' is a relationship and FieldResource exists
             ],
@@ -25,7 +24,7 @@ class CycleStageResource extends JsonResource
             'day_offset' => $this->day_offset,
             'expected_action' => $this->expected_action,
             'description' => $this->description,
-            'started_at' => $this->started_at,
+            'start_at' => $this->start_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'cycle' => new CycleResource($this->whenLoaded('cycle')), // Include related cycle if loaded
