@@ -20,6 +20,7 @@ use App\Http\Middleware\admin;
 Route::get('farmers', [UserController::class, 'farmerList']);
 Route::get('farmers/{id}', [UserController::class, 'show']);
 Route::get('/farmers/{id}/fields', [FieldController::class, 'listByFarmer']);
+Route::get('/farmer-fields/{fieldId}', [FieldController::class, 'show']);
 Route::get('/fields/{id}/active-cycle', [CycleController::class, 'activeByField']);
 Route::get('/cycles/{id}', [CycleController::class, 'show']);
 

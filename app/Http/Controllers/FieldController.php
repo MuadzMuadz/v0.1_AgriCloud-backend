@@ -110,6 +110,13 @@ class FieldController extends Controller
 
     /**
      * Update the specified resource in storage.
+     */    
+    /**
+     * update
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
      */
     public function update(UpdateFieldRequest $request, string $id){
         $user = auth()->guard()->user();
