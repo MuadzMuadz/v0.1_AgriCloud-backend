@@ -30,7 +30,7 @@ Route::get('/cycles/{id}', [CycleController::class, 'show']);
 // COMMON RESOURCES (Open/Public)
 // -------------------------
 
-Route::get('/crop_templates', [CropTemplateController::class, 'index']);
+Route::get('/crop-templates', [CropTemplateController::class, 'index']);
 Route::get('/crop-templates/{id}', [CropTemplateController::class, 'show']);
 
 // Route::get('/grow-stages', [GrowStagesController::class, 'index']);
@@ -87,7 +87,7 @@ Route::middleware(['auth:sanctum', farmer::class])->group(function()
 // ADMIN ROUTES
 // -------------------------
 
-Route::middleware(['auth:sanctum', admin::class])->group(function()
+Route::middleware(['auth:sanctum', admin::class])->prefix("/admin")->group(function()
 {
     // FIELD
     Route::get('fields', [FieldController::class, 'index']);

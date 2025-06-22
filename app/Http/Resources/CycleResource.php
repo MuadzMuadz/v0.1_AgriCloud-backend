@@ -57,6 +57,7 @@ class CycleResource extends JsonResource
             'description' => optional($this->cropTemplate)->description,
             'location' => $this->field->name,
             'status' => $status,
+            'start_date' => $this->start_date,
             'current_stage' => $currentStage ? [
                 'name' => $currentStage->stage_name,
                 'description' => $currentStage->description,
