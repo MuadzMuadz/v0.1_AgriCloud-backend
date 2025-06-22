@@ -31,4 +31,10 @@ class CropTemplate extends Model
     {
         return $this->hasMany(GrowStages::class, 'crop_template_id', 'id');
     }
+
+    public function getThumbnailUrlAttribute()
+    {
+        return $this->thumbnail ? asset('storage/' . $this->thumbnail) : null;
+    }
+
 }

@@ -6,7 +6,6 @@ use App\Http\Requests\StoreCycleRequest;
 use App\Http\Requests\UpdateCycleRequest;
 use App\Http\Resources\CycleResource;
 use App\Http\Resources\listCycleResource;
-use App\Services\{StageImport};
 
 use App\Models\Cycle;
 use App\Models\GrowStages;
@@ -24,7 +23,6 @@ class CycleController extends Controller
         $cycles = Cycle::all();
         foreach ($cycles as $cycle) {
             $cycle->refreshStatusIfNeeded();
-            $this->updateProgress($cycle);
         }
         return listCycleResource::collection($cycles);
     }
@@ -80,7 +78,7 @@ class CycleController extends Controller
     {
         // Fetch a single cycle with its related crop template and stages
         $cycle = Cycle::with(['cropTemplate', 'cycleStage'])->findOrFail($id);
-        $this->updateProgress($cycle);
+        
         return new CycleResource($cycle);
     }
 
@@ -128,21 +126,6 @@ class CycleController extends Controller
                 'day_offset' => $stage->day_offset,
                 'start_at' => Carbon::parse($startDate)->addDays($stage->day_offset),
             ]);
-        }
-    }
-
-    private function updateProgress(Cycle $cycle): void
-    {
-        $stages = $cycle->cycleStage;
-        $totalStages = $stages->count();
-        $completedStages = $stages->filter(function ($stage) {
-            return Carbon::now()->gte($stage->start_at);
-        })->count();
-
-        if ($totalStages > 0) {
-            $progress = ($completedStages / $totalStages) * 100;
-            $cycle->progress = round($progress, 2);
-            $cycle->save();
         }
     }
 }

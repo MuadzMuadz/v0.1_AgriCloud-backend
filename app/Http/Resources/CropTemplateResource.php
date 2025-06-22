@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\CropTemplate;
 
 class CropTemplateResource extends JsonResource
 {
@@ -15,19 +16,12 @@ class CropTemplateResource extends JsonResource
     public function toArray(Request $request): array
     {
         // Mapping jenis number to category
-        $jenisKategori = [
-            '1' => 'Tanaman Pangan',
-            '2' => 'Hortikultura',
-            '3' => 'Palawija',
-        ];
-
-        $kategori = isset($jenisKategori[$this->jenis]) ? $jenisKategori[$this->jenis] : null;
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'kategori' => $kategori,
-            'thumbnail' => $this->thumbnail,
+            'jenis' => $this->jenis,
+            'thumbnail' => $this->thumbnail ? asset('storage/' . $this->thumbnail) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

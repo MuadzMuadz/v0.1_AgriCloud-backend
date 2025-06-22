@@ -56,6 +56,7 @@ class CycleResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => optional($this->cropTemplate)->name,
+            'jenis' => $this->cropTemplate->jenis,
             'description' => optional($this->cropTemplate)->description,
             'location' => $this->field->name,
             'status' => $status,

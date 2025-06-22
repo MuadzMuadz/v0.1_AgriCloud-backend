@@ -63,4 +63,20 @@ class Cycle extends Model
             $this->save();
         }
     }
+
+    public function getProgressAttribute(): int
+    {
+        $startDate = Carbon::parse($this->start_date);
+        $now = Carbon::now();
+
+        $daysPassed = $startDate->diffInDays($now);
+
+        $totalDays = $this->cycleStage()->sum('day_offset');
+
+        if ($totalDays === 0) return 0;
+
+        $progress = ($daysPassed / $totalDays) * 100;
+
+        return min(100, round($progress)); // Jangan lebih dari 100
+    }
 }

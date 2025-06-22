@@ -17,7 +17,7 @@ class CropTemplateFactory extends Factory
         return [
             'name' => $this->faker->unique()->word,
             'description' => $this->faker->sentence,
-            'jenis' => $this->faker->randomElement(['1', '2', '3']),
+            'jenis' => $this->faker->randomElement(['Tanaman Pangan', 'Hortikultura', 'Palawija']),
         ];
     }
 }

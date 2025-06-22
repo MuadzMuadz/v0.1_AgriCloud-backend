@@ -6,6 +6,7 @@ use App\Models\CropTemplate;
 use App\Http\Resources\CropTemplateResource;
 use App\Http\Requests\StoreCropTemplateRequest;
 use App\Http\Requests\UpdateCropTemplateRequest;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Str;
 
@@ -38,15 +39,16 @@ class CropTemplateController extends Controller
 
         // Handle thumbnail upload if provided
         if ($request->hasFile('thumbnail')) {
-            $templateName = Str::slug($request->input('name'),'_');
-
+            // Handle the image upload
             $file = $request->file('thumbnail');
-            $filename = $templateName . '_' . time() . '.' . $file->getClientOriginalExtension();   
-            $path = "templates/{$templateName}/";
-            $file->storeAs($path, $filename, 'public');
+            $templateName = Str::slug($cropTemplate->name);
+            $ext = $file->getClientOriginalExtension();
+            $fileName = "{$templateName}.{$ext}";
+            $path = "templates/{$cropTemplate->name}/{$fileName}";
 
-            $cropTemplate->thumbnail = $path;
-            $cropTemplate->save();
+            Storage::disk('public')->put($path, file_get_contents($file));
+            
+            $cropTemplate->update(['thumbnail' => $path]);
         }
         
 
@@ -60,23 +62,7 @@ class CropTemplateController extends Controller
         // Fetch a single crop template with its grow stages
         $cropTemplate = CropTemplate::with('growStage')->findOrFail($id);
 
-        // Prepare detailed grow stage data
-        $growStages = $cropTemplate->growStage->map(function ($stage) {
-            return [
-                'id' => $stage->id,
-                'name' => $stage->name,
-                'description' => $stage->description,
-                'day_offset' => $stage->day_offset,
-                // Tambahkan field lain jika diperlukan
-            ];
-        });
-
-        return response()->json([
-            'data' => [
-                new CropTemplateResource($cropTemplate),
-                'grow_stages' => $growStages,
-                ]
-        ]);
+        return CropTemplateResource::make($cropTemplate);
     }  
     /**
      * update
@@ -89,23 +75,20 @@ class CropTemplateController extends Controller
         // Validate the request
         $validated = $request->validated();
 
-        // Find and update the crop template
         $cropTemplate = CropTemplate::findOrFail($id);
-        // dd($request->all());
-        // Handle thumbnail upload if provided
+
         if ($request->hasFile('thumbnail')) {
-            $templateName = Str::slug($request->input('name'),'_');
-
+            // Handle the image upload
             $file = $request->file('thumbnail');
-            $filename = $templateName . '_' . time() . '.' . $file->getClientOriginalExtension();   
-            $path = "templates/{$templateName}/";
-            $file->storeAs($path, $filename, 'public');
+            $templateName = Str::slug($cropTemplate->name);
+            $ext = $file->getClientOriginalExtension();
+            $fileName = "{$templateName}.{$ext}";
+            $path = "templates/{$cropTemplate->name}/{$fileName}";
 
-            $cropTemplate->thumbnail = $path;
-            $cropTemplate->save();
+            Storage::disk('public')->put($path, file_get_contents($file));
+
+            $cropTemplate->update(['thumbnail' => $path]);
         }
-        
-        $cropTemplate->update($validated);
 
         return new CropTemplateResource($cropTemplate);
     }
