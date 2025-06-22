@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CropTemplate;
 use App\Http\Resources\CropTemplateResource;
 use App\Http\Requests\StoreCropTemplateRequest;
+use App\Http\Requests\UpdateCropTemplateRequest;
+
 use Illuminate\Support\Str;
 
 class CropTemplateController extends Controller
@@ -75,22 +77,21 @@ class CropTemplateController extends Controller
                 'grow_stages' => $growStages,
                 ]
         ]);
-    }
-
+    }  
     /**
-     * Update the specified resource in storage.
+     * update
      *
      * @param  mixed $request
      * @param  mixed $id
      * @return void
      */
-    public function update(StoreCropTemplateRequest $request, string $id){
+    public function update(UpdateCropTemplateRequest $request, string $id){
         // Validate the request
         $validated = $request->validated();
 
         // Find and update the crop template
         $cropTemplate = CropTemplate::findOrFail($id);
-
+        // dd($request->all());
         // Handle thumbnail upload if provided
         if ($request->hasFile('thumbnail')) {
             $templateName = Str::slug($request->input('name'),'_');

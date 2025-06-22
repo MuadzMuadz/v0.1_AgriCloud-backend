@@ -5,6 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+use function Laravel\Prompts\progress;
+
 class CycleResource extends JsonResource
 {
     /**
@@ -57,6 +59,8 @@ class CycleResource extends JsonResource
             'description' => optional($this->cropTemplate)->description,
             'location' => $this->field->name,
             'status' => $status,
+            'progress' => $this->progress,
+            'thumbnail' => $this->cropTemplate->thumbnail,
             'start_date' => $this->start_date,
             'current_stage' => $currentStage ? [
                 'name' => $currentStage->stage_name,

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('crop_template_id')->constrained('crop_templates');
             $table->date('start_date')->nullable();
             $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
+            $table->integer('progress')->nullable();
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCycleRequest;
 use App\Http\Requests\UpdateCycleRequest;
 use App\Http\Resources\CycleResource;
+use App\Http\Resources\listCycleResource;
 use App\Services\{StageImport};
 
 use App\Models\Cycle;
@@ -14,7 +15,6 @@ use Carbon\Carbon;
 
 class CycleController extends Controller
 {
-    
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +22,11 @@ class CycleController extends Controller
     {
         // Fetch all cycles with their related crop templates and stages
         $cycles = Cycle::all();
-        return CycleResource::collection($cycles);
+        foreach ($cycles as $cycle) {
+            $cycle->refreshStatusIfNeeded();
+            $this->updateProgress($cycle);
+        }
+        return listCycleResource::collection($cycles);
     }
 
     /**
@@ -61,21 +65,6 @@ class CycleController extends Controller
         // Create Cycle
         $cycle = Cycle::create($validated);
 
-        // // Ambil grow stages dari template
-        // $growStages = GrowStages::where('crop_template_id', $validated['crop_template_id'])->orderBy('id')->get();
-
-        // // Convert to CycleStage
-        // foreach ($growStages as $stage) {
-        //     CycleStages::create([
-        //         'cycle_id' => $cycle->id,
-        //         'stage_name' => $stage->stage_name,
-        //         'expected_action' => $stage->expected_action,
-        //         'description' => $stage->description,
-        //         'day_offset' => $stage->day_offset,
-        //         'start_at' => Carbon::parse($validated['start_date'])->addDays($stage->day_offset),
-        //     ]); 
-        // }
-
         $this->generateStagesFromTemplate($cycle, $validated['start_date']);
 
         return response()->json([
@@ -91,16 +80,13 @@ class CycleController extends Controller
     {
         // Fetch a single cycle with its related crop template and stages
         $cycle = Cycle::with(['cropTemplate', 'cycleStage'])->findOrFail($id);
+        $this->updateProgress($cycle);
         return new CycleResource($cycle);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function updateStage(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -142,6 +128,21 @@ class CycleController extends Controller
                 'day_offset' => $stage->day_offset,
                 'start_at' => Carbon::parse($startDate)->addDays($stage->day_offset),
             ]);
+        }
+    }
+
+    private function updateProgress(Cycle $cycle): void
+    {
+        $stages = $cycle->cycleStage;
+        $totalStages = $stages->count();
+        $completedStages = $stages->filter(function ($stage) {
+            return Carbon::now()->gte($stage->start_at);
+        })->count();
+
+        if ($totalStages > 0) {
+            $progress = ($completedStages / $totalStages) * 100;
+            $cycle->progress = round($progress, 2);
+            $cycle->save();
         }
     }
 }

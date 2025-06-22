@@ -27,7 +27,7 @@ class CropTemplateResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'kategori' => $kategori,
-            'thumbnail' => $this->image_url, // ini datang dari accessor di model  
+            'thumbnail' => $this->thumbnail,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -103,6 +103,7 @@ Route::middleware(['auth:sanctum', admin::class])->prefix("/admin")->group(funct
     // CROP TEMPLATE
     Route::get('/crop-templates', [CropTemplateController::class, 'index']);
     Route::post('/crop-templates', [CropTemplateController::class, 'store']);
+    Route::get('/crop-templates/{id}', [CropTemplateController::class, 'show']);
     Route::put('/crop-templates/{id}', [CropTemplateController::class, 'update']);
     Route::delete('/crop-templates/{id}', [CropTemplateController::class, 'destroy']);
 

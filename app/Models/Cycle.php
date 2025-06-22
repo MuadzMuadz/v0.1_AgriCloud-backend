@@ -9,6 +9,8 @@ use App\Models\CycleStages;
 use App\Models\Field;
 use Carbon\Carbon;
 
+use function Laravel\Prompts\progress;
+
 class Cycle extends Model
 {
     /** @use HasFactory<\Database\Factories\CycleFactory> */
@@ -19,6 +21,7 @@ class Cycle extends Model
         'crop_template_id',
         'start_date',
         'status',
+        'progress',
     ];
     /**
      * Get the farmer_warehouse owns the fields
