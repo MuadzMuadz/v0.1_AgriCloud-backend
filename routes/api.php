@@ -58,10 +58,8 @@ Route::prefix('auth')->group(function () {
 // Role: Farmer
 Route::middleware(['auth:sanctum', farmer::class])->group(function()
 {
-    Route::get('/dashboard', [DashboardController::class, 'index']); //Lihat dashboard (statistik lahan, siklus, dll) (Berhasil testing)
-    Route::get('/dashboard/fields', [DashboardController::class, 'fields']); //Lihat statistik lahan
-    Route::get('/dashboard/cycles', [DashboardController::class, 'cycles']); //Lihat statistik siklus tanam
-    Route::get('/dashboard/cycle-stages', [DashboardController::class, 'cycleStages']); //Lihat statistik tahapan siklus
+    Route::get('/dashboard/fields', [DashboardController::class, 'indexField']); //Lihat statistik lahan
+    Route::get('/dashboard/cycles', [DashboardController::class, 'indexCycle']); //Lihat statistik siklus tanam
 
     // FIELDS
     Route::get('/myfields', [FieldController::class, 'myFields']); //Lihat lahan milik user yang sedang login
@@ -72,6 +70,7 @@ Route::middleware(['auth:sanctum', farmer::class])->group(function()
 
     // CYCLES
     Route::get('/mycycles', [CycleController::class, 'index']); //Lihat siklus tanam milik user yang sedang login
+    Route::get('/mycycles/{id}', [CycleController::class, 'show']); //Lihat detail siklus tanam
     Route::post('/mycycles', [CycleController::class, 'store']); //Mulai siklus tanam
     Route::put('/mycycles/{id}', [CycleController::class, 'update']); //Update siklus tanam
     Route::delete('/mycycles/{id}', [CycleController::class, 'destroy']); //Hapus siklus tanam
